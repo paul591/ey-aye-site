@@ -221,3 +221,22 @@ section { padding-top: 80px; padding-bottom: 80px; }
 .article .cta { margin-top: 40px; background: var(--teal); color: var(--stone); border-radius: 16px; padding: 28px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
 .article .cta .line { font-family: var(--font-display); font-size: 24px; letter-spacing: -0.02em; max-width: 480px; }
 .article .cta .btn { background: var(--rapeseed); color: var(--coal); }
+
+/* Footer, three columns */
+.site-footer { display: block; padding-top: 48px; padding-bottom: 32px; border-top: 1px solid var(--rule); margin-top: 24px; }
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; }
+.footer-col { display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: var(--flag); }
+.footer-col h4 { margin: 0 0 4px; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coal); }
+.footer-col a { color: var(--coal); text-decoration: none; }
+.footer-col a:hover { color: var(--teal); text-decoration: underline; }
+.footer-col .wordmark { font-size: 24px; margin-bottom: 4px; }
+.footer-col .strap { max-width: 280px; line-height: 1.45; }
+.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--flag); }
+.footer-bottom a { color: var(--flag); }
+
+/* Legal pages */
+.legal { padding-top: 48px; padding-bottom: 80px; max-width: 760px; display: flex; flex-direction: column; gap: 20px; font-size: 17px; }
+.legal h1 { font-size: clamp(36px, 5vw, 56px); }
+.legal h2 { font-size: 24px; margin-top: 12px; }
+.legal ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.legal .updated { font-size: 14px; color: var(--flag); }
