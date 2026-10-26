@@ -42,6 +42,7 @@ p { margin: 0; }
 /* Wordmark */
 .wordmark { display: inline-flex; align-items: center; gap: 0.22em; text-decoration: none; color: var(--coal); font-family: var(--font-display); letter-spacing: -0.02em; line-height: 1; }
 .wordmark .bar { display: inline-block; width: 0.54em; height: 0.21em; background: var(--teal); border-radius: 0.07em; }
+.wordmark .dot { display: inline-block; width: 0.21em; height: 0.21em; background: var(--rapeseed); border-radius: 50%; align-self: flex-end; margin-left: 0.04em; margin-bottom: 0.15em; }
 .wordmark.on-dark { color: var(--stone); }
 
 /* Buttons */
