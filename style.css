@@ -200,3 +200,24 @@ section { padding-top: 80px; padding-bottom: 80px; }
   .cta-bar { padding: 24px; }
   .site-nav { gap: 16px; }
 }
+
+/* Blog */
+.blog-index { padding-top: 48px; display: flex; flex-direction: column; gap: 32px; }
+.blog-index h1 { font-size: clamp(40px, 6vw, 64px); max-width: 800px; }
+.article { padding-top: 48px; padding-bottom: 80px; max-width: 760px; }
+.article header { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+.article h1 { font-size: clamp(36px, 5vw, 56px); }
+.article .meta { font-size: 14px; color: var(--flag); }
+.article .hero-img { aspect-ratio: 16 / 9; margin: 0 0 32px; }
+.article .body { display: flex; flex-direction: column; gap: 20px; }
+.article .body h2 { font-size: 28px; margin-top: 16px; }
+.article .body ul, .article .body ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.article .body .verdict-box { background: var(--white); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 24px; display: flex; gap: 16px; align-items: baseline; }
+.article .body .verdict-box b { font-family: var(--font-display); font-weight: 400; font-size: 26px; flex-shrink: 0; line-height: 1; }
+.article .body .verdict-box .aye { color: var(--teal); }
+.article .body .verdict-box .nay { color: var(--flag); }
+.article .body .fig { aspect-ratio: 16 / 10; }
+.article .body figcaption { font-size: 14px; color: var(--flag); margin-top: 8px; }
+.article .cta { margin-top: 40px; background: var(--teal); color: var(--stone); border-radius: 16px; padding: 28px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+.article .cta .line { font-family: var(--font-display); font-size: 24px; letter-spacing: -0.02em; max-width: 480px; }
+.article .cta .btn { background: var(--rapeseed); color: var(--coal); }
