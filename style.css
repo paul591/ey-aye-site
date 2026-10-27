@@ -73,11 +73,11 @@ section { padding-top: 80px; padding-bottom: 80px; }
 @media (max-width: 960px) { .hero-band::after { background: rgba(243,240,234,0.90); } }
 .hero-mobile-photo { display: none; }
 @media (max-width: 760px) {
-  .hero-band::before, .hero-band::after { display: none; }
-  .hero-mobile-photo { display: block; position: relative; height: 220px; background-image: url("/assets/harrogate-band.jpg"); background-size: cover; background-position: center 60%; }
-  .hero-mobile-photo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 64px; background: linear-gradient(180deg, rgba(243,240,234,0) 0%, #F3F0EA 100%); }
-  .hero { padding-top: 24px; }
+  .hero-band::before { background-image: url("/assets/harrogate-band.jpg"); background-position: center top; background-size: 100% auto; background-repeat: no-repeat; filter: none; }
+  .hero-band::after { background: linear-gradient(180deg, rgba(243,240,234,0) 0%, rgba(243,240,234,0.15) 150px, rgba(243,240,234,0.88) 300px, rgba(243,240,234,0.94) 100%); }
+  .hero { padding-top: 260px; }
   .hero-band .hero-photo { display: none; }
+}
 }
 .hero { padding-top: 48px; padding-bottom: 64px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
 .hero-copy { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
