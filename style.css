@@ -247,3 +247,8 @@ section { padding-top: 80px; padding-bottom: 80px; }
 .legal h2 { font-size: 24px; margin-top: 12px; }
 .legal ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
 .legal .updated { font-size: 14px; color: var(--flag); }
+
+/* Wide figure inside a work item */
+.work-wide { flex: 1 1 100%; margin: 8px 0 0; }
+.work-wide img { width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--rule); }
+.work-wide figcaption { font-size: 14px; color: var(--flag); margin-top: 10px; }
