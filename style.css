@@ -66,7 +66,8 @@ p { margin: 0; }
 section { padding-top: 80px; padding-bottom: 80px; }
 .hero-band { position: relative; isolation: isolate; overflow: hidden; }
 .hero-band::before { content: ""; position: absolute; inset: 0; z-index: -2; background-image: url("/assets/harrogate-hero.jpg"); background-size: cover; background-position: center 60%; filter: grayscale(0.25) saturate(0.9); }
-.hero-band::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(243,240,234,0.94) 0%, rgba(243,240,234,0.86) 40%, rgba(243,240,234,0.45) 70%, rgba(243,240,234,0.25) 100%); }
+.hero-band::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(243,240,234,0.25) 0%, rgba(243,240,234,0.92) 28%, rgba(243,240,234,0.92) 52%, rgba(243,240,234,0.45) 72%, rgba(243,240,234,0.25) 100%); }
+@media (max-width: 1400px) { .hero-band::after { background: linear-gradient(90deg, rgba(243,240,234,0.92) 0%, rgba(243,240,234,0.90) 45%, rgba(243,240,234,0.45) 72%, rgba(243,240,234,0.25) 100%); } }
 .hero-band .hero-photo { background: rgba(243,240,234,0.55); border: 1px solid rgba(21,24,28,0.08); backdrop-filter: blur(2px); }
 @media (max-width: 960px) { .hero-band::after { background: rgba(243,240,234,0.90); } }
 @media (max-width: 640px) { .hero-band::before { background-image: url("/assets/harrogate-hero-960.jpg"); } }
