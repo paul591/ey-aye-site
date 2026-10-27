@@ -64,6 +64,11 @@ p { margin: 0; }
 
 /* Sections */
 section { padding-top: 80px; padding-bottom: 80px; }
+.hero-band { position: relative; isolation: isolate; overflow: hidden; }
+.hero-band::before { content: ""; position: absolute; inset: 0; z-index: -2; background-image: url("/assets/harrogate-hero.jpg"); background-size: cover; background-position: center 55%; filter: grayscale(0.35) saturate(0.85); }
+.hero-band::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(243,240,234,0.96) 0%, rgba(243,240,234,0.90) 45%, rgba(243,240,234,0.72) 100%); }
+@media (max-width: 960px) { .hero-band::after { background: rgba(243,240,234,0.92); } }
+@media (max-width: 640px) { .hero-band::before { background-image: url("/assets/harrogate-hero-960.jpg"); } }
 .hero { padding-top: 48px; padding-bottom: 64px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
 .hero-copy { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
 .hero-copy .lead { max-width: 560px; }
