@@ -73,7 +73,7 @@ section { padding-top: 80px; padding-bottom: 80px; }
 @media (max-width: 960px) { .hero-band::after { background: rgba(243,240,234,0.90); } }
 .hero-mobile-photo { display: none; }
 @media (max-width: 760px) {
-  .hero-band::before { background-image: url("/assets/harrogate-phone.jpg"); background-position: center top; background-size: cover; filter: none; }
+  .hero-band::before { background-image: url("/assets/harrogate-phone-v2.jpg"); background-position: center top; background-size: cover; filter: none; }
   .hero-band::after { background: linear-gradient(180deg, rgba(243,240,234,0) 0%, rgba(243,240,234,0.10) 140px, rgba(243,240,234,0.85) 300px, rgba(243,240,234,0.94) 420px, rgba(243,240,234,0.94) 100%); }
   .hero { padding-top: 260px; }
   .hero-band .hero-photo { display: none; }
