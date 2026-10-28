@@ -65,13 +65,17 @@ p { margin: 0; }
 
 /* Sections */
 section { padding-top: 80px; padding-bottom: 80px; }
-.hero-band { position: relative; isolation: isolate; overflow: hidden; }
-.hero-band::before { content: ""; position: absolute; inset: 0; z-index: -2; background-image: url("/assets/harrogate-hero.jpg"); background-size: cover; background-position: center 60%; filter: grayscale(0.25) saturate(0.9); }
-.hero-band::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(243,240,234,0.25) 0%, rgba(243,240,234,0.92) 28%, rgba(243,240,234,0.92) 52%, rgba(243,240,234,0.45) 72%, rgba(243,240,234,0.25) 100%); }
-@media (max-width: 1400px) { .hero-band::after { background: linear-gradient(90deg, rgba(243,240,234,0.92) 0%, rgba(243,240,234,0.90) 45%, rgba(243,240,234,0.45) 72%, rgba(243,240,234,0.25) 100%); } }
-.hero-band .hero-photo { background: rgba(243,240,234,0.55); border: 1px solid rgba(21,24,28,0.08); backdrop-filter: blur(2px); }
-@media (max-width: 960px) { .hero-band::after { background: rgba(243,240,234,0.90); } }
-@media (max-width: 640px) { .hero-band::before { background-image: url("/assets/harrogate-hero-960.jpg"); } }
+.hero-band { position: relative; isolation: isolate; overflow: hidden; color: var(--stone); }
+.hero-band::before { content: ""; position: absolute; inset: 0; z-index: -2; background-image: url("/assets/harrogate-hero.jpg"); background-size: cover; background-position: center 60%; }
+.hero-band::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(21,24,28,0.30) 0%, rgba(21,24,28,0.82) 28%, rgba(21,24,28,0.82) 52%, rgba(21,24,28,0.45) 72%, rgba(21,24,28,0.30) 100%); }
+@media (max-width: 1400px) { .hero-band::after { background: linear-gradient(90deg, rgba(21,24,28,0.84) 0%, rgba(21,24,28,0.80) 45%, rgba(21,24,28,0.45) 72%, rgba(21,24,28,0.30) 100%); } }
+.hero-band .hero-photo { background: rgba(243,240,234,0.10); border: 1px solid rgba(243,240,234,0.25); color: rgba(243,240,234,0.7); backdrop-filter: blur(2px); }
+.hero-band h1, .hero-band .lead { color: var(--stone); }
+.hero-band .small { color: rgba(243,240,234,0.75); }
+.hero-band .btn-teal { background: var(--rapeseed); color: var(--coal); }
+.hero-band .btn-teal:hover { background: #E0B224; color: var(--coal); }
+.hero-band .btn-outline { border-color: var(--stone); color: var(--stone); }
+.hero-band .btn-outline:hover { background: var(--stone); color: var(--coal); }
 .hero { padding-top: 48px; padding-bottom: 64px; display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
 .hero-copy { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
 .hero-copy .lead { max-width: 560px; }
@@ -320,23 +324,9 @@ section { padding-top: 80px; padding-bottom: 80px; }
   .site-nav a:last-of-type { border-bottom: 0; }
   .site-nav .btn { margin-top: 12px; justify-content: center; border-bottom: 0; }
   .nav-toggle:checked ~ .site-nav { display: flex; }
-  .hero { padding-top: 24px; padding-bottom: 48px; gap: 24px; }
+  .hero { padding-top: 32px; padding-bottom: 48px; gap: 24px; }
   .hero h1 { font-size: 38px; }
   .hero-band .hero-photo { display: none; }
-}
-
-/* Teal header */
-.site-header-band { background: var(--teal); }
-.site-header-band .site-header { padding-top: 20px; padding-bottom: 20px; }
-.site-header-band .wordmark { color: var(--stone); }
-.site-header-band .wordmark .bar { background: var(--rapeseed); }
-.site-header-band .wordmark .dot { background: var(--stone); }
-.site-header-band .site-nav a { color: var(--stone); }
-.site-header-band .site-nav a.current { color: var(--rapeseed); }
-.site-header-band .site-nav .btn { background: var(--rapeseed); color: var(--coal); }
-.site-header-band .site-nav .btn:hover { background: #E0B224; }
-.site-header-band .nav-toggle-label { background: transparent; border: 2px solid var(--stone); color: var(--stone); }
-@media (max-width: 760px) {
-  .site-header-band .site-nav { background: var(--teal-dark); border-color: rgba(243,240,234,0.2); }
-  .site-header-band .site-nav a { border-color: rgba(243,240,234,0.15); }
+  .hero-band::before { background-position: 35% 60%; }
+  .hero-band::after { background: rgba(21,24,28,0.74); }
 }
