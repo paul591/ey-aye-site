@@ -324,3 +324,19 @@ section { padding-top: 80px; padding-bottom: 80px; }
   .hero h1 { font-size: 38px; }
   .hero-band .hero-photo { display: none; }
 }
+
+/* Teal header */
+.site-header-band { background: var(--teal); }
+.site-header-band .site-header { padding-top: 20px; padding-bottom: 20px; }
+.site-header-band .wordmark { color: var(--stone); }
+.site-header-band .wordmark .bar { background: var(--rapeseed); }
+.site-header-band .wordmark .dot { background: var(--stone); }
+.site-header-band .site-nav a { color: var(--stone); }
+.site-header-band .site-nav a.current { color: var(--rapeseed); }
+.site-header-band .site-nav .btn { background: var(--rapeseed); color: var(--coal); }
+.site-header-band .site-nav .btn:hover { background: #E0B224; }
+.site-header-band .nav-toggle-label { background: transparent; border: 2px solid var(--stone); color: var(--stone); }
+@media (max-width: 760px) {
+  .site-header-band .site-nav { background: var(--teal-dark); border-color: rgba(243,240,234,0.2); }
+  .site-header-band .site-nav a { border-color: rgba(243,240,234,0.15); }
+}
