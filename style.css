@@ -346,3 +346,13 @@ section { padding-top: 80px; padding-bottom: 80px; }
 .cta-bar { background: var(--teal); border-color: var(--teal); color: var(--stone); }
 .cta-bar .btn-teal { background: var(--rapeseed); color: var(--coal); }
 .cta-bar .btn-teal:hover { background: #E0B224; color: var(--coal); }
+
+/* Offer pages: teal header panel. How we work: teal step tiles */
+.offer-hero-wrap { padding-top: 48px; padding-bottom: 0; }
+.offer-hero { background: var(--teal); color: var(--stone); border-radius: 16px; padding: 48px; display: flex; flex-direction: column; gap: 16px; }
+.offer-hero h1 { font-size: clamp(40px, 6vw, 64px); color: var(--stone); }
+.offer-hero .lead { max-width: 720px; color: var(--stone); }
+.offer-hero a { color: var(--stone); }
+.offer-hero-wrap + .offer-page { padding-top: 40px; }
+@media (max-width: 640px) { .offer-hero { padding: 28px 24px; } }
+.stage .n { width: 64px; height: 64px; background: var(--teal); color: var(--stone); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 34px; }
