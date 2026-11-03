@@ -82,6 +82,7 @@ section { padding-top: 80px; padding-bottom: 80px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .photo { background: var(--rule); border-radius: 16px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; color: var(--flag); font-size: 15px; overflow: hidden; }
 .photo img { width: 100%; height: 100%; object-fit: cover; }
+.photo:has(> img) { padding: 0; }
 .hero-photo { flex: 1 1 380px; min-width: 0; aspect-ratio: 4 / 5; max-height: 560px; }
 
 .dark { background: var(--coal); color: var(--stone); }
