@@ -332,3 +332,17 @@ section { padding-top: 80px; padding-bottom: 80px; }
   .hero-band::before { background-position: 35% 60%; }
   .hero-band::after { background: rgba(21,24,28,0.74); }
 }
+
+/* Brand colour lift: Rapeseed full stops, teal panels on inner pages */
+.stop { color: var(--rapeseed); }
+.cap .num { font-family: var(--font-display); font-size: 40px; font-weight: 400; letter-spacing: -0.03em; line-height: 1; color: var(--teal); }
+.cap .side { background: var(--teal); color: var(--stone); border-radius: 12px; padding: 24px; }
+.cap .pair-row .aye { color: var(--rapeseed); }
+.cap .pair-row .nay { color: #BFD9D7; }
+.cap .systems span { background: transparent; border-color: rgba(243, 240, 234, 0.45); color: var(--stone); }
+.cap .example { color: #D7E8E6; border-top-color: rgba(243, 240, 234, 0.25); }
+.cap .example a { color: var(--stone); }
+.cap .example a:hover { color: var(--rapeseed); }
+.cta-bar { background: var(--teal); border-color: var(--teal); color: var(--stone); }
+.cta-bar .btn-teal { background: var(--rapeseed); color: var(--coal); }
+.cta-bar .btn-teal:hover { background: #E0B224; color: var(--coal); }
