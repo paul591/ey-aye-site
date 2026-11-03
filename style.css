@@ -159,6 +159,7 @@ section { padding-top: 80px; padding-bottom: 80px; }
 .post-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
 .post { display: flex; flex-direction: column; gap: 12px; }
 .post .thumb { aspect-ratio: 16 / 10; background: var(--rule); border-radius: 12px; }
+.blog-index .post .thumb { aspect-ratio: 1200 / 630; }
 .post .meta { font-size: 13px; color: var(--flag); }
 .post h3 { font-family: var(--font-body); font-weight: 600; font-size: 22px; letter-spacing: -0.01em; line-height: 1.25; }
 .post h3 a { color: var(--coal); text-decoration: none; }
