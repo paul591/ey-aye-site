@@ -13,3 +13,6 @@ assets/blog/originals
 node_modules
 .DS_Store
 .npmrc
+
+# build scripts
+scripts

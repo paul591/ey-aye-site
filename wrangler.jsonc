@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ey-aye-site",
+  "compatibility_date": "2026-11-03",
+  "observability": {
+    "enabled": true
+  },
+  "build": {
+    "command": "node scripts/sitemap.mjs",
+    "watch_dir": "blog"
+  },
+  "assets": {
+    "directory": "."
+  }
+}
