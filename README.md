@@ -44,7 +44,7 @@ Every push to `main` redeploys. Preview URLs are created for other branches.
 - [ ] Prices: £350 / from £2,500 / from £150 are set in `index.html`. Change if needed.
 - [ ] Automotive card: name the company on `work/index.html` only if you're clear to.
 - [ ] OG image: make a 1200×630 `assets/og.png` (wordmark on stone) for link previews.
-- [ ] Loftsoft company number in the footer, if Loftsoft is a Ltd.
+- [ ] If Loftsoft becomes a Ltd: company number and registered office in the footer, privacy and terms pages.
 
 ## Adding a page
 
