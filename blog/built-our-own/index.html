@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>We needed a social media tool, so we built our own. — Ey-aye</title>
+<meta name="description" content="Why we built Relay, our own tool for posting to Facebook, Instagram and LinkedIn, and what it says about bespoke software for small businesses now.">
+<link rel="canonical" href="https://ey-aye.co.uk/blog/built-our-own/">
+<meta property="og:title" content="We needed a social media tool, so we built our own.">
+<meta property="og:description" content="Off-the-shelf didn't fit, so we built our own in a few days, with AI and proper engineering. Here's what it does, and why that matters for your business.">
+<meta property="og:url" content="https://ey-aye.co.uk/blog/built-our-own/">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://ey-aye.co.uk/assets/blog/built-our-own-hero.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&display=swap">
+<link rel="stylesheet" href="/style.css?v=21">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"We needed a social media tool, so we built our own.","author":{"@type":"Organization","name":"Ey-aye"},"publisher":{"@type":"Organization","name":"Ey-aye"},"datePublished":"2026-11-06","mainEntityOfPage":"https://ey-aye.co.uk/blog/built-our-own/"}
+</script>
+</head>
+<body>
+
+<header class="wrap site-header">
+  <a href="/" class="wordmark" aria-label="Ey-aye home"><span>ey</span><span class="bar"></span><span>aye</span><span class="dot"></span></a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
+  <label for="nav-toggle" class="nav-toggle-label" aria-label="Open menu"><span class="bars"></span>Menu</label>
+  <nav class="site-nav" aria-label="Main">
+    <a href="/#what">What we do</a>
+    <a href="/capabilities/">Capabilities</a>
+    <a href="/how-we-work/">How we work</a>
+    <a href="/work/">Work</a>
+    <a href="/blog/" class="current">Blog</a>
+    <a href="/#book" class="btn btn-teal">Book a look-round</a>
+  </nav>
+</header>
+
+<main>
+<article class="wrap article">
+  <header>
+    <div class="meta">Straight answers · 6 November 2026 · 5 min read</div>
+    <h1>We needed a social media tool, so we built our own<span class="stop">.</span></h1>
+    <p class="lead">Every new post here used to mean copying it to Facebook, Instagram and LinkedIn by hand. Rather than pay for another app that nearly fits, we built exactly what we needed, in a few days. Here's what it does, and why that's now possible for your business too.</p>
+  </header>
+
+  <div class="photo hero-img"><img src="/assets/blog/built-our-own.jpg" alt="A bright modern desk with an open laptop showing code, a phone on a stand showing a social media feed, and a teal mug of tea" width="1600" height="900"></div>
+
+  <div class="body">
+    <p>Every week a new post goes up on this blog. And every week, someone then had to copy it over to Facebook, write an Instagram caption, dig out the header image, and find a more businesslike angle for LinkedIn. Three platforms, three slightly different jobs, every single time.</p>
+    <p>We don't only post for Ey-aye, either. We look after the pages for a couple of other businesses too. That's the kind of small, repetitive chore that quietly eats an hour here and an hour there.</p>
+    <p>So we fixed it. Not with another monthly subscription, but by building our own tool. We called it Relay.</p>
+
+    <h2>Why we didn't just buy something</h2>
+    <p>There are plenty of social media scheduling apps out there. Honestly, some of them would have done most of the job. But "most of the job" is the trouble with off-the-shelf software. You pay monthly for a hundred features you never touch, then find the one thing you actually need isn't there, or sits in the next price tier up.</p>
+    <p>What we wanted was narrow and specific:</p>
+    <ul>
+      <li>Spot a new blog post on our site as soon as it goes live, with no buttons to press</li>
+      <li>Draft a version for each platform in our voice, not a generic one</li>
+      <li>Let us approve or tweak each draft, from a browser or just by asking Claude in a chat</li>
+      <li>Post at times that suit each audience, and tell us straight away if anything goes wrong</li>
+      <li>Work for more than one business, with each one kept completely separate</li>
+    </ul>
+    <p>Not long ago, that list would have meant months of developer time and a budget no small business has. Today, for people who build software for a living and use AI properly, it's a few days' work. So that's what we did.</p>
+
+    <h2>What Relay actually does</h2>
+    <ol>
+      <li><strong>It watches the blog.</strong> Every hour it checks our site for anything new.</li>
+      <li><strong>Claude writes the drafts.</strong> For each new post it writes a separate version for Facebook, Instagram and LinkedIn: a short hook for one, a caption with hashtags for another, a more professional angle for the third. The post's header image goes with them.</li>
+      <li><strong>A person approves.</strong> Nothing goes out on its own. We read each draft, edit it or send it back with a note, then approve it. We can do that in a simple web dashboard, or by asking Claude "what's waiting for me?"</li>
+      <li><strong>It schedules sensibly.</strong> Each page has its own posting slots, say Tuesday and Thursday at 9am. Approve a draft and it drops into the next free slot, unless we pick a time.</li>
+      <li><strong>It posts, and speaks up when something's wrong.</strong> If a platform turns a post down, Relay tries again a few times, then emails us. Every morning at 7am we get a short note of what went out and what needs a look.</li>
+    </ol>
+    <figure>
+      <div class="photo fig"><img src="/assets/blog/built-our-own-relay.jpg" alt="The Relay dashboard showing a blog post with its separate Facebook and Instagram versions, each marked as published" width="1024" height="640" loading="lazy" style="object-position: top left"></div>
+      <figcaption>Relay's view of one blog post: each platform gets its own version, its own status and a button to repost it with a fresh angle.</figcaption>
+    </figure>
+    <p>Each platform moves along on its own, so the Facebook post can be live while we're still polishing the LinkedIn one.</p>
+
+    <h2>AI inside it, and AI behind it</h2>
+    <p>Relay uses AI to write its drafts, but it was also built with AI. Claude was our very fast pair of hands; decades of software architecture experience were the judgement on top. That combination is the whole point. AI can write a lot of code quickly. Knowing which code to write, and what goes wrong once real customers and real accounts are involved, is still the job of an experienced engineer.</p>
+    <p>So the parts that matter got proper thought, even on a small tool:</p>
+    <ul>
+      <li><strong>Logins stay locked away.</strong> Nobody ever pastes a Facebook key into a box. You sign in with Facebook the normal way, and the access Relay gets is encrypted and never shown on screen, to anyone.</li>
+      <li><strong>Each business is sealed off from the others.</strong> Every piece of data belongs to one business, and Relay works out which business you are from who's signed in, never from anything typed into a form.</li>
+      <li><strong>It won't double-post.</strong> If Facebook goes quiet halfway through a post, that post might already be live. Rather than retry blindly and post twice, Relay stops and asks a person.</li>
+      <li><strong>It checks itself every morning.</strong> At 6am it tests each connection, so an expired login turns up as a polite email, not a missing week of posts.</li>
+      <li><strong>There's a paper trail.</strong> Every attempt, retry and AI draft is recorded, including which version of our instructions produced it and what it cost to run.</li>
+    </ul>
+    <p>None of that is exotic. It's simply what good software has always needed, and what quick DIY jobs and cheap apps tend to skip. It runs on Cloudflare, so there's no server sat in a cupboard for anyone to look after.</p>
+
+    <h2>The bigger point: software that fits you</h2>
+    <p>For years, small businesses have had two choices. Bend the way you work to fit an off-the-shelf app, or pay a developer tens of thousands for something bespoke. Most sensibly chose the first and lived with the gaps: the spreadsheet next to the booking system, the copy-and-paste between the till and the accounts, the job someone does every Friday because two systems won't talk to each other.</p>
+    <p>That trade-off has shifted. With AI doing much of the heavy lifting, a small, well-built tool that fits exactly how your business works now takes days or weeks, not months. It can plug into the systems you already use, do the one job you need, and nothing else. Less to learn, less to pay for every month, and nobody else's product roadmap to wait on.</p>
+    <p>The catch is the same as it's always been. Fast and sloppy is still sloppy. Speed only helps if whoever's steering knows how to build something secure and reliable. That's the bit we bring.</p>
+
+    <h2>When not to build, and how we can help</h2>
+    <p>We'll be straight with you: building isn't always the answer.</p>
+    <div class="verdict-box"><b class="nay">nay</b><span>to building when an off-the-shelf tool does 95% of what you need at a fair price. Use it.</span></div>
+    <div class="verdict-box"><b class="aye">aye</b><span>to building when there's a repetitive job no app quite covers, two systems that should talk and don't, or a way of working that's genuinely yours.</span></div>
+    <p>If something like that is nagging at you, that's exactly what our <a href="/look-round/">free look-round</a> is for. We'll see how you work, tell you honestly whether it's worth building, and if it is, give you a <a href="/build/">fixed price</a> up front. Relay took us a few days. Yours might too.</p>
+    <p>Or drop us a line at <a href="mailto:howdo@ey-aye.co.uk">howdo@ey-aye.co.uk</a>.</p>
+  </div>
+
+  <div class="cta">
+    <div class="line">Got a job your software almost does? We can build the rest. We can do this for you too.</div>
+    <a href="/#book" class="btn">Book a look-round</a>
+  </div>
+</article>
+</main>
+
+<footer class="wrap site-footer">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <a href="/" class="wordmark" aria-label="Ey-aye"><span>ey</span><span class="bar"></span><span>aye</span><span class="dot"></span></a>
+      <div class="strap">Yorkshire-built AI for Yorkshire businesses. A straight aye or nay, then the bit that's worth building.</div>
+      <div class="endorse">a <img src="/assets/loftsoft.png" alt="Loftsoft" style="height: 12px; width: auto; filter: grayscale(1) brightness(0.45)"> service</div>
+    </div>
+    <div class="footer-col">
+      <h4>Site</h4>
+      <a href="/#what">What we do</a>
+      <a href="/capabilities/">What we can build</a>
+      <a href="/how-we-work/">How we work</a>
+      <a href="/ai-lead/">Fractional AI lead</a>
+      <a href="/work/">Work</a>
+      <a href="/#about">About</a>
+      <a href="/blog/">Straight answers</a>
+      <a href="/#book">Book a look-round</a>
+    </div>
+    <div class="footer-col">
+      <h4>Get in touch</h4>
+      <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a>
+      <span>Harrogate, North Yorkshire</span>
+      <h4 style="margin-top: 12px">The small print</h4>
+      <a href="/privacy/">Privacy policy</a>
+      <a href="/cookies/">Cookies</a>
+      <a href="/terms/">Terms</a>
+      <a href="/accessibility/">Accessibility</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 Loftsoft Ltd, trading as Ey-aye. Registered in England and Wales, company no. [NUMBER]. Registered office: [ADDRESS].</div>
+    <div>ICO registration: [REFERENCE]</div>
+  </div>
+</footer>
+
+</body>
+</html>
