@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ey-aye-site",
+  "main": "src/worker.js",
   "compatibility_date": "2026-11-03",
   "observability": {
     "enabled": true
@@ -10,6 +11,16 @@
     "watch_dir": "blog"
   },
   "assets": {
-    "directory": "."
-  }
+    "directory": ".",
+    "binding": "ASSETS",
+    // Pages go through the Worker so tagged landings can be counted; static files don't.
+    "run_worker_first": ["/*", "!/assets/*", "!/style.css", "!/favicon.svg", "!/site.js", "!/sitemap.xml", "!/robots.txt"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "ey-aye-site", "database_id": "3ca4c699-fc35-4ad5-b514-1169f456cbcd" }
+  ],
+  // Enquiry emails go to the ENQUIRY_TO secret, which must be a verified Email Routing destination.
+  "send_email": [
+    { "name": "MAILER" }
+  ]
 }

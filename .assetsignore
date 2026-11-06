@@ -16,3 +16,8 @@ node_modules
 
 # build scripts
 scripts
+src
+schema.sql
+wrangler.jsonc
+README.md
+IMAGE-PROMPTS.md

@@ -1,6 +1,18 @@
 # Ey-aye — static site
 
-Plain HTML and CSS. No build step. Hosted on Cloudflare Pages.
+Plain HTML and CSS, served by a Cloudflare Worker with static assets (`wrangler deploy`).
+
+## The Worker (`src/worker.js`)
+
+- **Tagged landings.** A visit that arrives from another site with `utm_*` tags, `fbclid` or `gclid` is counted in the D1 database `ey-aye-site` (page, tags, referring site, country). No cookies, no IP address, nothing in the browser.
+- **Contact form.** The form on the home page posts to `/api/enquiry`. The Worker saves it to D1 and emails it to the `ENQUIRY_TO` secret (a verified Email Routing destination) with Reply-To set to the sender, then redirects to `/thanks.html`.
+- **Report.** `https://ey-aye.co.uk/stats?key=<STATS_KEY>` shows tagged visits and enquiries by channel for the last 7, 30 or 90 days.
+- `site.js` (on every page) keeps a visit's tags on internal links and copies them into the form, so an enquiry can be tied to the link that brought someone in.
+- `scripts/sitemap.mjs` rebuilds `sitemap.xml` with lastmod dates before every deploy.
+
+Secrets: `wrangler secret put STATS_KEY`, `wrangler secret put ENQUIRY_TO`. Tables: `schema.sql`.
+
+Tag every link you share: `?utm_source=facebook&utm_medium=social&utm_campaign=blog-wk2` (use `utm_medium=paid` for ads).
 
 ## Files
 
@@ -13,7 +25,7 @@ Plain HTML and CSS. No build step. Hosted on Cloudflare Pages.
 - `_headers` — security and caching headers for Cloudflare Pages
 - `robots.txt`, `sitemap.xml`
 
-## Deploy to Cloudflare Pages
+## Original Cloudflare Pages notes (the site now deploys as a Worker)
 
 1. Push this folder to a GitHub repo (e.g. `ey-aye-site`).
 2. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git → pick the repo.
@@ -26,7 +38,6 @@ Every push to `main` redeploys. Preview URLs are created for other branches.
 
 ## Before going live
 
-- [ ] Contact form: get a free access key at web3forms.com, paste it into `index.html` where it says `YOUR-WEB3FORMS-KEY`. Submissions arrive by email.
 - [ ] Booking: set up a free Cal.com account, create a 60-minute "Look-round" event type with your availability, then in `index.html` uncomment the iframe and replace `YOUR-HANDLE`.
 - [ ] Photos: replace the three `[Photo …]` placeholders on the home page and the ones on the work page. Put files in `assets/` and swap the placeholder text for an `<img>` as shown in the comment.
 - [ ] Phone number: add it to the footer in both pages if you want it public.

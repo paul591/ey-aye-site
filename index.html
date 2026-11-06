@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Archivo+Black&display=swap">
-<link rel="stylesheet" href="/style.css?v=21">
+<link rel="stylesheet" href="/style.css?v=22">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -222,16 +222,24 @@
         [Booking calendar goes here]
       </div>
     </div>
-    <!-- Web3Forms: get a free access key at web3forms.com and paste it below. -->
-    <form class="form" action="https://api.web3forms.com/submit" method="POST" aria-label="Contact form">
-      <input type="hidden" name="access_key" value="YOUR-WEB3FORMS-KEY">
-      <input type="hidden" name="subject" value="Ey-aye enquiry from the website">
-      <input type="hidden" name="redirect" value="https://ey-aye.co.uk/thanks.html">
+    <form class="form" action="/api/enquiry" method="POST" aria-label="Contact form">
+      <input type="hidden" name="landing" value="/">
       <input type="checkbox" name="botcheck" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
       <label>Your name<input type="text" name="name" required></label>
       <label>Your business<input type="text" name="business"></label>
       <label>Email<input type="email" name="email" required></label>
       <label>What's eating your time?<textarea name="message" rows="4"></textarea></label>
+      <label>How did you hear about us?<select name="heard_about">
+        <option value="">Choose one</option>
+        <option>Facebook</option>
+        <option>Instagram</option>
+        <option>LinkedIn</option>
+        <option>Google search</option>
+        <option>Our blog</option>
+        <option>Someone recommended you</option>
+        <option>Met at an event</option>
+        <option>Other</option>
+      </select></label>
       <button type="submit" class="btn btn-rapeseed">Send it</button>
     </form>
   </div>
@@ -274,5 +282,6 @@
   </div>
 </footer>
 
+<script src="/site.js" defer></script>
 </body>
 </html>
