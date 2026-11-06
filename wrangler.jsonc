@@ -1,20 +1,20 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ey-aye-site",
-  "main": "src/worker.js",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-03",
   "observability": {
     "enabled": true
   },
+  // Astro builds the site into dist/ before every deploy.
   "build": {
-    "command": "node scripts/sitemap.mjs",
-    "watch_dir": "blog"
+    "command": "npm run build"
   },
   "assets": {
-    "directory": ".",
+    "directory": "./dist",
     "binding": "ASSETS",
     // Pages go through the Worker so tagged landings can be counted; static files don't.
-    "run_worker_first": ["/*", "!/assets/*", "!/style.css", "!/favicon.svg", "!/site.js", "!/sitemap.xml", "!/robots.txt"]
+    "run_worker_first": ["/*", "!/_astro/*", "!/assets/*", "!/favicon.svg", "!/style.css", "!/site.js", "!/sitemap.xml", "!/rss.xml", "!/robots.txt"]
   },
   "d1_databases": [
     { "binding": "DB", "database_name": "ey-aye-site", "database_id": "3ca4c699-fc35-4ad5-b514-1169f456cbcd" }

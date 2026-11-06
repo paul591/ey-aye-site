@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const page = {
+  "title": "The build — Ey-aye",
+  "description": "One job, fixed price, four weeks, built into the tools you already use. You see it every week and you own it afterwards. From £2,500.",
+  "path": "/build/",
+  "og": [
+    ["og:title", "The build — Ey-aye"],
+    ["og:description", "One job, fixed price, four weeks, built into the tools you already use. You see it every week and you own it afterwards. From £2,500."],
+    ["og:url", "https://ey-aye.co.uk/build/"],
+    ["og:type", "website"]
+  ],
+  "current": "what"
+};
+---
+<Base {...page}>
+<section class="wrap offer-hero-wrap">
+  <div class="offer-hero">
+    <div class="kicker">Step three</div>
+    <h1>The build<span class="stop">.</span></h1>
+    <p class="lead">One job, fixed price, four weeks. We take the biggest aye from the look-round and build it properly into the tools you already use. You see it working every week, not at the end. When it's done, you own it.</p>
+  </div>
+</section>
+
+<section class="wrap offer-page">
+  <div class="main">
+    <h2>What gets built</h2>
+    <p>Anything on the <a href="/capabilities/">capabilities page</a>, scoped to one job. The usual first builds:</p>
+    <ul>
+      <li><strong>The morning brief.</strong> Who's in today, who's new, who's back and what they said, who owes you. Read with the first brew.</li>
+      <li><strong>One place to ask.</strong> Bookings, accounts, email and the spreadsheet joined up so you can ask across all of them.</li>
+      <li><strong>The quote that writes itself.</strong> From a photo and three words, in your voice, before you've left the drive.</li>
+      <li><strong>The Friday chase.</strong> Unpaid invoices chased politely, with the invoice attached, after you've pressed go.</li>
+      <li><strong>A dashboard with a brain.</strong> The numbers that matter, where they came from, and a weekly note on what to do next.</li>
+    </ul>
+    <h2>How it runs</h2>
+    <ul>
+      <li>Price agreed in writing before anything starts. If the scope changes, the change and the price get agreed before carrying on.</li>
+      <li>Week one you see the first rough version. Every week after, a working update. No big reveal at the end.</li>
+      <li>Built into your systems on accounts you own. You get the code, the prompts, the logins.</li>
+      <li>Every build meets the five safety rules: least access, a person approving the steps that matter, a log of everything, your data in your systems, nothing trained on. If it can't, it doesn't get built.</li>
+      <li>Handover is a session with the people who'll use it, not a PDF.</li>
+    </ul>
+    <h2>Already know what you need?</h2>
+    <p>For larger businesses opening their own software and systems to AI, we build bespoke MCP servers and the governance around them, deployed in your own estate if that's where it needs to live. That's a different conversation and we're happy to have it at that level from the start. <a href="/capabilities/#mcp">More on that here</a>, or just <a href="/#book">get in touch</a>.</p>
+    <p class="next-offer">Afterwards: <a href="/fed-and-watered/">fed and watered</a> keeps it running.</p>
+  </div>
+  <aside class="aside">
+    <div class="price">From £2,500</div>
+    <div>Fixed price, agreed before we start. Four weeks for a typical first build. You own everything.</div>
+    <a href="/#book" class="btn btn-teal">Talk about a build</a>
+    <div class="small">Bigger jobs and bespoke MCP work are scoped and priced on their own.</div>
+  </aside>
+</section>
+</Base>

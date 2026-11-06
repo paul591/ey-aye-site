@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const page = {
+  "title": "Fed and watered — Ey-aye",
+  "description": "Keeping what we built running: updates when your software changes, a monthly check, a person on the phone. From £150 a month, cancel whenever.",
+  "path": "/fed-and-watered/",
+  "og": [
+    ["og:title", "Fed and watered — Ey-aye"],
+    ["og:description", "Keeping what we built running: updates when your software changes, a monthly check, a person on the phone. From £150 a month, cancel whenever."],
+    ["og:url", "https://ey-aye.co.uk/fed-and-watered/"],
+    ["og:type", "website"]
+  ],
+  "current": "what"
+};
+---
+<Base {...page}>
+<section class="wrap offer-hero-wrap">
+  <div class="offer-hero">
+    <div class="kicker">Step four</div>
+    <h1>Fed and watered<span class="stop">.</span></h1>
+    <p class="lead">Keeping what we built running. Software changes, and the thing that worked in March can stop in September when your booking system updates. This is the monthly fee that means somebody notices before you do.</p>
+  </div>
+</section>
+
+<section class="wrap offer-page">
+  <div class="main">
+    <h2>What's in it</h2>
+    <ul>
+      <li><strong>Updates when something upstream moves.</strong> Wix, Shopify, Xero and the AI providers all change things without asking. We keep up so you don't have to.</li>
+      <li><strong>A monthly check.</strong> Is it still doing what it should? Are the numbers still right? Has anyone's job changed so the tool should too?</li>
+      <li><strong>A person on the phone.</strong> When something looks odd, you ring and a human who built it answers. Not a ticket queue.</li>
+      <li><strong>Small tweaks included.</strong> A new field on the brief, a changed email wording, a different Friday. Anything that takes under an hour just gets done.</li>
+      <li><strong>The running costs in one place.</strong> We tell you what the AI usage actually cost that month, so there's never a surprise.</li>
+    </ul>
+    <h2>What isn't</h2>
+    <ul>
+      <li>New builds. Those are scoped and priced separately, usually cheaper than the first one because the plumbing's in.</li>
+      <li>Being on call at 3am. Office hours, next working day for anything that isn't stopping the business.</li>
+    </ul>
+    <h2>Cancelling</h2>
+    <p>Thirty days' notice, no reason needed. Nothing we built stops working when you cancel; it just stops being looked after. You can come back whenever.</p>
+    <p class="next-offer">For bigger firms that want someone senior owning all of this: the <a href="/ai-lead/">fractional AI lead</a>.</p>
+  </div>
+  <aside class="aside">
+    <div class="price">From £150 a month</div>
+    <div>Depends on how much was built and how many systems it touches. Agreed at handover.</div>
+    <a href="/#book" class="btn btn-teal">Ask about it</a>
+    <div class="small">Billed monthly. Cancel with 30 days' notice. Nothing breaks if you do.</div>
+  </aside>
+</section>
+</Base>

@@ -6,3 +6,8 @@ assets/blog/originals/
 !.dev.vars.example
 .env*
 !.env.example
+
+# Astro
+node_modules/
+dist/
+.astro/

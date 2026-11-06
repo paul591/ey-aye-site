@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const page = {
+  "title": "The half-day — Ey-aye",
+  "description": "Four hours with Claude or ChatGPT and your own data. Build your first tool, learn where your data lives and what never goes into a public AI. £350.",
+  "path": "/half-day/",
+  "og": [
+    ["og:title", "The half-day — Ey-aye"],
+    ["og:description", "Four hours with Claude or ChatGPT and your own data. Build your first tool, learn where your data lives and what never goes into a public AI. £350."],
+    ["og:url", "https://ey-aye.co.uk/half-day/"],
+    ["og:type", "website"]
+  ],
+  "current": "what"
+};
+---
+<Base {...page}>
+<section class="wrap offer-hero-wrap">
+  <div class="offer-hero">
+    <div class="kicker">Step two · most people start here</div>
+    <h1>The half-day<span class="stop">.</span></h1>
+    <p class="lead">Four hours at your place with Claude or ChatGPT and your own data. By the end you've built your first useful thing yourself, you know what to ask for, and you know what must never go into a public AI. No new subscription.</p>
+  </div>
+</section>
+
+<section class="wrap offer-page">
+  <div class="main">
+    <h2>What happens</h2>
+    <ul>
+      <li><strong>Hour one: the basics, done properly.</strong> How to ask, how to give it your own material, how to check what comes back. Using your real quotes, bookings and spreadsheets, not examples.</li>
+      <li><strong>Hour two: build something.</strong> A report, a dashboard from last month's numbers, a quote template that sounds like you. You drive, we steer. It's yours when you leave.</li>
+      <li><strong>Hour three: where your data lives.</strong> Which AI accounts train on what you type and which don't. How to set the switches. What should never go in at all: customer lists, contracts, anything you'd call your IP. How staff phones keep chat history. The practical version, not the policy version.</li>
+      <li><strong>Hour four: the rule sheet and the plan.</strong> A one-page "what goes in, what doesn't" in your words, pinned to the kitchen wall. And an honest list of what would need building properly, if anything.</li>
+    </ul>
+    <h2>What you leave with</h2>
+    <ul>
+      <li>One working tool you built, and the prompts behind it.</li>
+      <li>A rule sheet your staff can actually follow.</li>
+      <li>The knowledge to spot a £200-a-month wrapper from a mile off.</li>
+      <li>A clear aye or nay on whether the next step is worth it.</li>
+    </ul>
+    <h2>Who it's for</h2>
+    <p>The owner plus whoever does the admin. Up to four people works well; beyond that it becomes a lecture. If you've got a team of ten who all need it, ask about running it twice.</p>
+    <p class="next-offer">Next step, if there is one: <a href="/build/">the build</a>. Most people don't need it for a while.</p>
+  </div>
+  <aside class="aside">
+    <div class="price">£350</div>
+    <div>Four hours, up to four people, at your place. Uses the accounts you've already got.</div>
+    <a href="/#book" class="btn btn-teal">Book a half-day</a>
+    <div class="small">Invoiced after the session. If it wasn't useful, say so and don't pay it.</div>
+  </aside>
+</section>
+</Base>
