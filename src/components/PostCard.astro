@@ -1,0 +1,17 @@
+---
+import { cardImage, longDate, postPath, type Post } from '../lib/posts';
+
+interface Props {
+  post: Post;
+  /** Show the one-line summary under the title. */
+  summary?: boolean;
+}
+const { post, summary = true } = Astro.props;
+const href = postPath(post);
+---
+<article class="post">
+  <a href={href} class="photo thumb" aria-hidden="true" tabindex="-1"><img src={cardImage(post)} alt="" width="1200" height="630" loading="lazy"></a>
+  <div class="meta">{longDate(post.data.date)} · {post.data.readTime} min</div>
+  <h3><a href={href}>{post.data.title}</a></h3>
+  {summary && <p class="small">{post.data.summary}</p>}
+</article>

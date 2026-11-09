@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPosts } from '../../lib/posts';
+
+const page = {
+  "title": "Straight answers — the Ey-aye blog",
+  "description": "Plain-English answers on AI for small businesses in Harrogate and Yorkshire: what's worth doing, what isn't, and how to keep your data safe while you find out.",
+  "path": "/blog/",
+  "og": [
+    ["og:title", "Straight answers — the Ey-aye blog"],
+    ["og:description", "Plain-English answers on AI for small businesses in Yorkshire."],
+    ["og:url", "https://ey-aye.co.uk/blog/"],
+    ["og:type", "website"]
+  ],
+  "current": "blog"
+};
+const posts = await getPosts();
+---
+<Base {...page}>
+<section class="wrap blog-index">
+  <h1>Straight answers<span class="stop">.</span></h1>
+  <p class="lead" style="max-width: 680px">Plain English on AI for small businesses. What's worth doing, what isn't, and how to keep your customers' data where it belongs while you find out. New post most weeks.</p>
+  <div class="post-grid">
+    {posts.map((post) => <PostCard post={post} />)}
+  </div>
+</section>
+</Base>
