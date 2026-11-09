@@ -1,7 +1,7 @@
 // POST /api/enquiry: the contact form on the home page.
 //
 // Saves the enquiry as a submission of the "Enquiry" form in Wix Forms, then sends the visitor to
-// /thanks.html. In the Wix dashboard it appears under Forms & Submissions, creates or updates a
+// /thanks. In the Wix dashboard it appears under Forms & Submissions, creates or updates a
 // contact (name, business, email), and Wix sends the notification email.
 //
 // The page's own form stays as it is: this route maps its field names onto the Wix form's fields.
@@ -40,7 +40,7 @@ function page(title: string, text: string, status: number): Response {
 }
 
 // Relative, because behind Wix's proxy the request URL is an internal address, not the public one.
-const thanks = () => new Response(null, { status: 303, headers: { Location: '/thanks.html' } });
+const thanks = () => new Response(null, { status: 303, headers: { Location: '/thanks' } });
 
 export const POST: APIRoute = async ({ request }) => {
   let form: FormData;

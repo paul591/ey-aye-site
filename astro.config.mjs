@@ -16,7 +16,8 @@ export default defineConfig({
   // Astro's same-site check misfires behind Wix's proxy; Wix's own setup turns it off.
   security: { checkOrigin: false },
   image: { domains: ['static.wixstatic.com'] },
-  // `about/index.astro` → /about/ and `thanks.astro` → /thanks.html: the same URLs as before.
+  // Pages render on the server, so `thanks.astro` is /thanks (the static site had /thanks.html).
   build: { format: 'preserve' },
+  redirects: { '/thanks.html': '/thanks' },
   trailingSlash: 'ignore',
 });
