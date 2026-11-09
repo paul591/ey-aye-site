@@ -1,14 +1,14 @@
 ---
 // A blog post, read from Wix Blog on each request.
 //
-// This is a Wix "item page": the wixMetadata export, loadSEOTagsServiceConfig and <SEO.Tags> let
+// This is a Wix "item page": the wixMetadata export, loadSEOTagsServiceConfig and <WixSeoTags> let
 // the post's title, description and social tags be edited in the Wix dashboard, and register the
 // route with Wix's sitemap and SEO tools. Keep those three pieces, and keep the file named
 // [slug].astro: the `slug` key in wixMetadata.identifiers must match the route parameter, and Wix
 // can't fill in a [...slug] rest parameter (it resolved every post to "/blog/[...slug]").
 import Base from '../../layouts/Base.astro';
 import { WIX_APPS } from '@wix/essentials';
-import { SEO } from '@wix/seo/components';
+import WixSeoTags from '../../components/WixSeoTags.astro';
 import { loadSEOTagsServiceConfig } from '@wix/seo/services';
 import { seoTags } from '@wix/seo';
 import { SITE, articleParts, cardImage, fetchPostBySlug, headerImage, isoDate, longDate, postPath, type PostDetail } from '../../lib/posts';
@@ -110,7 +110,7 @@ const fallbackHead = seoTagsServiceConfig
     };
 ---
 <Base {...fallbackHead} current="blog">
-{seoTagsServiceConfig && <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />}
+{seoTagsServiceConfig && <WixSeoTags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />}
 <article class="wrap article">
   <header>
     <div class="meta">Straight answers · <time datetime={post.dateISO}>{longDate(post.dateISO)}</time>{readTime}</div>

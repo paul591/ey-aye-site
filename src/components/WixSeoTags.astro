@@ -1,0 +1,26 @@
+---
+// The head tags Wix resolved for an item page (a blog post): title, description, canonical, social
+// tags and structured data, as set in the post's SEO settings in the dashboard.
+//
+// The same output as Wix's <SEO.Tags> from @wix/seo/components, written in Astro: that one is a
+// React component, which would need React added to a site that otherwise has none (and without a
+// React renderer the post page hung rather than rendering).
+import type { loadSEOTagsServiceConfig } from '@wix/seo/services';
+
+type Config = Awaited<ReturnType<typeof loadSEOTagsServiceConfig>>;
+interface Props {
+  seoTagsServiceConfig: Config;
+}
+
+const { seoTagsServiceConfig } = Astro.props;
+type AnyTag = { type?: string; props?: Record<string, string>; meta?: Record<string, string>; children?: string; disabled?: boolean };
+const tags = ((seoTagsServiceConfig?.tags ?? []) as AnyTag[]).filter((t) => !t.disabled);
+const mark = { 'wix-seo-tags': 'true' };
+---
+{tags.map((t) => {
+  if (t.type === 'title') return <title {...mark}>{t.children ?? ''}</title>;
+  if (t.type === 'meta') return <meta {...t.props} {...mark} />;
+  if (t.type === 'link') return <link {...t.props} {...mark} />;
+  if (t.type === 'script') return <script is:inline {...t.props} {...t.meta} {...mark} set:html={t.children ?? ''} />;
+  return null;
+})}
