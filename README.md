@@ -59,7 +59,12 @@ Pages are in `src/pages/`, one folder per page with an `index.astro`; the header
 
 ## The Worker (`worker/index.js`)
 
-**Not running on Wix.** On this branch the enquiry form, tagged-landing counts and `/stats` have no server behind them yet. They need moving to Wix (Wix Forms for the enquiry form) before this branch can replace `main`.
+**Not running on Wix.** On this branch:
+
+- **The contact form** posts to `src/pages/api/enquiry.ts`, which saves it to the **Enquiry** form in Wix Forms (Dashboard → Forms & Submissions). Each enquiry creates or updates a contact, and Wix sends the notification email (set who gets it in the form's settings). The Wix form's fields: `name`, `business`, `email`, `message`, `heard_about`, `landing_page`, and `tracking` (the visit's utm tags and which ad platform, e.g. `source=facebook · medium=social · click=fbclid`). Change labels or the "How did you hear" options in the dashboard; keep a new option's wording the same in `src/pages/index.astro` and `HEARD_ABOUT` in the route.
+- **Tagged-landing counts and `/stats`** aren't carried over: Wix Analytics in the dashboard shows traffic by source and campaign, and each enquiry keeps its tags in `tracking`.
+
+The rest of this section describes `main`.
 
 
 - **Tagged landings.** A visit that arrives from another site with `utm_*` tags, `fbclid` or `gclid` is counted in the D1 database `ey-aye-site` (page, tags, referring site, country). No cookies, no IP address, nothing in the browser.
