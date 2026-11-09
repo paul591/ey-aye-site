@@ -107,6 +107,23 @@ const from = (f: ClientFile) => (f.uploadedBy === 'client' ? (admin ? 'From clie
           </div>
           <div class="doc-actions">
             <a class="btn btn-outline btn-sm" href={`/clients/doc/${d.id}`} aria-label={`Download ${d.title}`}>Download</a>
+            {folders.length > 0 && (
+              <details class="doc-move">
+                <summary class="btn-link">Move</summary>
+                <form method="post" action="/api/clients/files">
+                  <input type="hidden" name="action" value="move">
+                  <input type="hidden" name="id" value={d.id}>
+                  {clientField && <input type="hidden" name="client" value={clientField}>}
+                  {folder && <input type="hidden" name="folderId" value={folder.id}>}
+                  <label class="sr-only" for={`move-${d.id}`}>Move {d.title} to</label>
+                  <select id={`move-${d.id}`} name="to">
+                    {folder && <option value="">All files (top level)</option>}
+                    {folders.filter((f) => f.id !== folder?.id).map((f) => <option value={f.id}>{f.name}</option>)}
+                  </select>
+                  <button class="btn btn-teal btn-sm" type="submit">Move</button>
+                </form>
+              </details>
+            )}
             {admin && (
               <form method="post" action="/api/clients/files" data-confirm={`Delete “${d.title}”? It goes to the Media Manager’s trash.`}>
                 <input type="hidden" name="action" value="delete">

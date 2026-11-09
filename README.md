@@ -38,16 +38,14 @@ Everything else updates itself: the blog page, the newest three on the home page
 
 ## Client area (`/clients/`)
 
-Clients sign in with Wix's own login page (the **Client login** link in the footer, which includes "forgotten password"), then see the documents shared with them. Only people you add can sign in: member sign-up must be set to approval-only in **Dashboard → Settings → Member signup**.
+Each client gets a private file space shared with Ey-aye. They sign in with Wix's own login page (the **Client Login** link in the header and footer, which includes "forgotten password"). Member sign-up should be approval-only (**Dashboard → Settings → Member signup**) so only people you add get in.
 
-**Adding a client:** Dashboard → **Contacts** (or **Site Members**) → add them as a site member with their email, then send them the "set your password" email from their member page. Each client gets their own login.
+- **Clients** (`/clients/`): see their files, download (15-minute links), upload (drag and drop; PDFs, Office files, text and images, up to 50 MB), add and rename folders, and move files between folders.
+- **You** (`/clients/admin/`, or **Client Area** in the header when signed in): pick a client and do all of the above in their space, plus delete files and folders (deleted files go to the Media Manager's trash). Admins are listed by member ID in `ADMIN_MEMBER_IDS` in `src/lib/clients.ts`.
 
-**Sharing a document:**
+**Adding a client:** add them as a site member in the dashboard (Contacts or Site Members), then send their set-password email.
 
-1. Upload the file to **Media** as a **private** file (in the `client-documents` folder). Private files can't be opened by URL; the site makes a 15-minute link for the right client only.
-2. In **CMS → ClientDocuments**, add a row: `title`, the client's `memberId` (from their member page, or ask Claude), the file's `fileId` (the file name Wix gives it, like `b35103_….pdf`), and optionally `fileName` (what it downloads as), `note`, `documentDate` and `clientEmail` (just for your reference).
-
-The pages: `src/pages/clients/index.astro` (the list) and `src/pages/clients/doc/[id].ts` (the download check), both using `src/lib/clients.ts`. The collection is admin-only; the site reads it with elevated permissions and always filters by the member ID from the visitor's own login, never by anything in the request. Tick **Hide from search engines** for `/clients` in SEO Settings → Main Pages.
+Storage: files are private in the Media Manager under `client-documents/<memberId>/`; the CMS collections `ClientDocuments` (one row per file) and `ClientFolders` (one per folder) say whose they are and where they sit. Both collections are admin-only; the site reads them with elevated permissions and scopes everything to the signed-in member (or the client an admin picked). Uploads go from the browser straight to Wix and are only recorded if the file landed in that client's own Media folder. Code: `src/lib/clients.ts`, `src/components/ClientSpace.astro`, `src/pages/clients/`, `src/pages/api/clients/`. Tick **Hide from search engines** for the `/clients` pages in SEO Settings → Main Pages.
 
 ## Layout
 

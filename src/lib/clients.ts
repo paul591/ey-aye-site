@@ -277,6 +277,16 @@ async function removeFiles(rows: Row[]) {
   for (const r of rows) await auth.elevate(items.remove)(DOCS, r._id);
 }
 
+/** Moves a file into one of the space's folders, or to the top level (folderId ''). Clients and admins. */
+export async function moveFile(space: Client, fileRowId: string, folderId: string): Promise<string | null> {
+  const row = await fileRow(space.id, fileRowId);
+  if (!row) return 'That file doesn’t exist.';
+  if (folderId && !(await folderRow(space, folderId))) return 'That folder doesn’t exist any more.';
+  const { folderId: _old, ...rest } = row;
+  await auth.elevate(items.update)(DOCS, folderId ? { ...rest, folderId } : rest);
+  return null;
+}
+
 /** Admin only: deletes one file (to the Media Manager's trash, so it can be restored). */
 export async function deleteFile(viewer: Client, space: Client, fileRowId: string): Promise<string | null> {
   if (!viewer.isAdmin) return 'Only Ey-aye can delete files.';

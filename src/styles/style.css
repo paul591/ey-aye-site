@@ -407,3 +407,10 @@ a.folder-card:hover { border-color: var(--teal); }
 .upload-item.failed .upload-state { color: #A3362B; font-weight: 600; flex-shrink: 1; text-align: right; }
 .doc-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 .folder-new input { flex-basis: 100%; }
+.doc-actions { flex-wrap: wrap; justify-content: flex-end; }
+.doc-move { position: relative; }
+.doc-move summary { list-style: none; display: inline-block; }
+.doc-move summary::-webkit-details-marker { display: none; }
+.doc-move form { position: absolute; right: 0; top: calc(100% + 6px); z-index: 10; display: flex; gap: 8px; align-items: center; padding: 12px; background: var(--white); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 8px 24px rgba(21,24,28,.12); }
+.doc-move select { min-height: 40px; max-width: 220px; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; font: inherit; font-size: 15px; background: var(--white); }
+@media (max-width: 640px) { .doc-move form { position: static; margin-top: 8px; box-shadow: none; flex-wrap: wrap; } .doc-actions { justify-content: flex-start; } }
