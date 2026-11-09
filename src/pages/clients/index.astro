@@ -1,56 +1,48 @@
 ---
-// /clients/: a signed-in client's documents. Anyone not signed in goes to Wix's login page and
-// comes back here afterwards. Sign-up is approval-only (Dashboard → Settings → Member signup), so
-// only people Paul adds can get in, and the list only ever shows rows with their own member ID.
+// /clients/: a signed-in client's own file space. Anyone not signed in goes to Wix's login page and
+// comes back here; an admin goes to /clients/admin/ to pick a client.
 import Base from '../../layouts/Base.astro';
-import { currentClient, documentsFor, longDate, LOGIN_URL, LOGOUT_URL, type ClientDocument } from '../../lib/clients';
+import ClientSpace from '../../components/ClientSpace.astro';
+import { currentClient, filesFor, foldersFor, isId, LOGIN_URL, LOGOUT_URL, type ClientFile, type Folder } from '../../lib/clients';
 
-// Personal page: never cached anywhere.
 Astro.response.headers.set('Cache-Control', 'private, no-store');
 
-const client = await currentClient();
-if (!client) return Astro.redirect(LOGIN_URL);
+const viewer = await currentClient();
+if (!viewer) return Astro.redirect(LOGIN_URL);
+if (viewer.isAdmin) return Astro.redirect('/clients/admin/');
 
-let docs: ClientDocument[] = [];
+let folders: Folder[] = [];
+let files: ClientFile[] = [];
 let failed = false;
 try {
-  docs = await documentsFor(client);
+  [folders, files] = await Promise.all([foldersFor(viewer), filesFor(viewer)]);
 } catch (err) {
-  console.error('client documents failed', err);
+  console.error('client space failed', err);
   failed = true;
 }
-const firstName = client.name.split(' ')[0];
+const folderParam = Astro.url.searchParams.get('folder');
+const folder = isId(folderParam) ? folders.find((f) => f.id === folderParam) : undefined;
+const rawMsg = Astro.url.searchParams.get('msg') ?? '';
+const msg = /^[A-Za-z’'., -]{1,120}$/.test(rawMsg) ? rawMsg : undefined;
+const firstName = viewer.name.split(' ')[0];
 ---
-<Base title="Your documents — Ey-aye" noindex>
+<Base title="Your files — Ey-aye" noindex>
 <section class="wrap hero client-area">
   <div class="hero-copy">
     <p class="kicker teal">Client area</p>
     <h1>{firstName ? `Ey up, ${firstName}` : 'Ey up'}<span class="stop">.</span></h1>
-    <p class="lead">Everything we've shared with you, newest first. Links last fifteen minutes, so download from here rather than bookmarking them.</p>
+    <p class="lead">Everything we share with you, and anything you want to send us. Download links last fifteen minutes, so use this page rather than bookmarking them.</p>
   </div>
 
   {failed ? (
-    <p class="client-empty">Your documents won't load just now. Try again in a minute, or email <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a> and we'll send them over.</p>
-  ) : docs.length === 0 ? (
-    <p class="client-empty">Nothing here yet. When we share something with you, it'll show up on this page.</p>
+    <p class="client-empty">Your files won't load just now. Try again in a minute, or email <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a>.</p>
   ) : (
-    <ul class="doc-list">
-      {docs.map((d) => (
-        <li class="doc">
-          <div class="doc-text">
-            <a class="doc-title" href={`/clients/doc/${d.id}`}>{d.title}</a>
-            <span class="doc-meta">{[longDate(d.date), d.fileName].filter(Boolean).join(' · ')}</span>
-            {d.note && <p class="doc-note">{d.note}</p>}
-          </div>
-          <a class="btn btn-outline doc-btn" href={`/clients/doc/${d.id}`} aria-label={`Download ${d.title}`}>Download</a>
-        </li>
-      ))}
-    </ul>
+    <ClientSpace viewer={viewer} space={viewer} folders={folders} files={files} folder={folder} msg={msg} />
   )}
 
   <form method="post" action={LOGOUT_URL} class="client-signout">
-    <span>Signed in as {client.email || client.name}.</span>
-    <button type="submit" class="btn btn-outline">Sign out</button>
+    <span>Signed in as {viewer.email || viewer.name}.</span>
+    <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
   </form>
 </section>
 </Base>

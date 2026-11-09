@@ -1,0 +1,80 @@
+---
+// /clients/admin/: Paul's view. Without ?client= it lists every client; with ?client=<memberId> it
+// shows that client's space with delete buttons. Anyone who isn't an admin gets a 404.
+import Base from '../../../layouts/Base.astro';
+import ClientSpace from '../../../components/ClientSpace.astro';
+import { clientById, currentClient, filesFor, foldersFor, isId, listClients, LOGOUT_URL, type Client, type ClientFile, type Folder } from '../../../lib/clients';
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
+const viewer = await currentClient();
+if (!viewer) return Astro.redirect('/api/auth/login?returnToUrl=/clients/admin/');
+if (!viewer.isAdmin) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'private, no-store' } });
+
+const clientParam = Astro.url.searchParams.get('client');
+let space: Client | null = null;
+let clients: Client[] = [];
+let folders: Folder[] = [];
+let files: ClientFile[] = [];
+let failed = false;
+try {
+  if (isId(clientParam)) {
+    space = await clientById(clientParam);
+    if (space) [folders, files] = await Promise.all([foldersFor(space), filesFor(space)]);
+  } else {
+    clients = await listClients();
+  }
+} catch (err) {
+  console.error('client admin failed', err);
+  failed = true;
+}
+const folderParam = Astro.url.searchParams.get('folder');
+const folder = isId(folderParam) ? folders.find((f) => f.id === folderParam) : undefined;
+const rawMsg = Astro.url.searchParams.get('msg') ?? '';
+const msg = /^[A-Za-z’'., -]{1,120}$/.test(rawMsg) ? rawMsg : undefined;
+---
+<Base title="Clients — Ey-aye" noindex>
+<section class="wrap hero client-area">
+  <div class="hero-copy">
+    <p class="kicker teal">Client area · admin</p>
+    {space ? (
+      <>
+        <h1>{space.name || space.email}<span class="stop">.</span></h1>
+        <p class="lead">{space.email} · <a href="/clients/admin/">All clients</a></p>
+      </>
+    ) : (
+      <>
+        <h1>Clients<span class="stop">.</span></h1>
+        <p class="lead">Pick a client to see their files, add folders, upload and delete. To add a client, add them as a site member in the Wix dashboard and send their set-password email.</p>
+      </>
+    )}
+  </div>
+
+  {failed ? (
+    <p class="client-empty">That didn't load. Try again in a minute.</p>
+  ) : isId(clientParam) && !space ? (
+    <p class="client-empty">No approved client with that ID. <a href="/clients/admin/">Back to all clients</a>.</p>
+  ) : space ? (
+    <ClientSpace viewer={viewer} space={space} folders={folders} files={files} folder={folder} msg={msg} />
+  ) : clients.length === 0 ? (
+    <p class="client-empty">No clients yet.</p>
+  ) : (
+    <ul class="doc-list">
+      {clients.map((c) => (
+        <li class="doc">
+          <div class="doc-text">
+            <a class="doc-title" href={`/clients/admin/?client=${c.id}`}>{c.name || c.email}</a>
+            <span class="doc-meta">{c.email}</span>
+          </div>
+          <a class="btn btn-outline btn-sm" href={`/clients/admin/?client=${c.id}`}>Open</a>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <form method="post" action={LOGOUT_URL} class="client-signout">
+    <span>Signed in as {viewer.email || viewer.name} (admin).</span>
+    <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+  </form>
+</section>
+</Base>
