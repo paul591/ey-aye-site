@@ -32,6 +32,15 @@ interface Props {
 
 const { title, description, path, og = [], jsonLd, noindex = false, current, minimal = false, ownSeo = false } = Astro.props;
 const site = 'https://ey-aye.co.uk';
+// Signed-in clients see "Client Area"; everyone else "Client Login". Read from Wix's session cookie
+// (no API call), so it costs nothing on every page. The /clients/ page does the real check.
+let member = false;
+try {
+  member = Astro.cookies.get('wixSession')?.json()?.tokens?.refreshToken?.role === 'member';
+} catch {
+  member = false;
+}
+
 const nav: [Nav, string, string][] = [
   ['what', '/#what', 'What we do'],
   ['capabilities', '/capabilities/', 'Capabilities'],
@@ -72,6 +81,7 @@ const nav: [Nav, string, string][] = [
       <label for="nav-toggle" class="nav-toggle-label" aria-label="Open menu"><span class="bars"></span>Menu</label>
       <nav class="site-nav" aria-label="Main">
         {nav.map(([key, href, label]) => <a href={href} class={key === current ? 'current' : undefined}>{label}</a>)}
+        <a href={member ? '/clients/' : '/api/auth/login?returnToUrl=/clients/'} class="nav-client" rel="nofollow"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>{member ? 'Client Area' : 'Client Login'}</a>
         <a href="/#book" class="btn btn-teal">Book a look-round</a>
       </nav>
     </>
@@ -104,7 +114,7 @@ const nav: [Nav, string, string][] = [
       <h4>Get in touch</h4>
       <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a>
       <span>Harrogate, North Yorkshire</span>
-      <a href="/api/auth/login?returnToUrl=/clients/" rel="nofollow">Client login</a>
+      <a href={member ? '/clients/' : '/api/auth/login?returnToUrl=/clients/'} rel="nofollow">{member ? 'Client Area' : 'Client Login'}</a>
       <h4 style="margin-top: 12px">The small print</h4>
       <a href="/privacy/">Privacy policy</a>
       <a href="/cookies/">Cookies</a>
