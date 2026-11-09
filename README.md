@@ -34,7 +34,7 @@ Write the post in the Wix editor with these conventions, and the site turns each
 
 Links to `https://ey-aye.co.uk/...` work on any address the site is served from. Never change a published post's slug: the address changes, and Relay would treat it as a new post.
 
-Everything else updates itself: the blog page, the newest three on the home page, the sitemap, the RSS feed at `/rss.xml`, and each post's title, description and social tags (which you can edit per post in the dashboard).
+Everything else updates itself: the blog page, the newest three on the home page, Wix's sitemap, the RSS feeds at `/rss.xml` (ours) and `/blog-feed.xml` (Wix's), and each post's title, description and social tags (which you can edit per post in the dashboard).
 
 ## Layout
 
@@ -53,7 +53,9 @@ cloudflare/          The Worker's wrangler config, moved aside so the Wix build 
 
 ## Adding or editing a page
 
-Pages are in `src/pages/`, one folder per page with an `index.astro`. Each starts with a `page` block (title, description, social tags, which nav item is highlighted); the rest is the page's HTML. To add one, copy `src/pages/build/index.astro` to `src/pages/newpage/index.astro` and change both parts. It appears in the sitemap automatically. Header, nav and footer are in `src/layouts/Base.astro`, once.
+Pages are in `src/pages/`, one folder per page with an `index.astro`; the header, nav and footer are in `src/layouts/Base.astro`, once. To add one, copy `src/pages/build/index.astro` to `src/pages/newpage/index.astro`, change it, and release.
+
+**Titles and descriptions live in Wix, not in the code.** Wix adds each page's title, description, canonical link and social tags itself, so the layout doesn't write them (two of each would confuse search engines). Set them in **Dashboard → SEO & GEO → SEO Settings → Main Pages**; a new page appears there after its first release. The `page` block at the top of each file still holds the wording, as the record of what to put in the dashboard. Blog posts take theirs from each post's own SEO settings. The sitemap at `/sitemap.xml` is Wix's, built from the same page list (`/_wix/pages.json`) and the blog.
 
 ## The Worker (`worker/index.js`)
 

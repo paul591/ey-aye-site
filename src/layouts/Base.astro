@@ -1,11 +1,18 @@
 ---
-// Every page: head (title, description, canonical, social tags), header with nav, footer.
+// Every page: head, header with nav, footer.
+//
+// On Wix the title, description, canonical link and social tags come from Wix, not from here:
+//   - ordinary pages: Wix injects them from Dashboard > SEO & GEO > SEO Settings > Main Pages
+//   - blog posts: the post page fills the `seo-tags` slot from the post's own SEO settings
+// Writing them here as well would give every page two titles. The title, description and og props
+// are kept on each page as the wording to use in the dashboard, and are only rendered when a post
+// page passes `ownSeo` because Wix's SEO lookup didn't answer in time.
 import '../styles/style.css';
 
 export type Nav = 'what' | 'capabilities' | 'how-we-work' | 'work' | 'blog';
 
 interface Props {
-  /** Full <title>. Leave out on a page whose head tags come from Wix (the `seo-tags` slot). */
+  /** The page's title. On Wix it's set in the dashboard (see above); only rendered with `ownSeo`. */
   title?: string;
   description?: string;
   /** Path for the canonical link, e.g. `/blog/`. Omit for pages that shouldn't have one. */
@@ -19,12 +26,11 @@ interface Props {
   current?: Nav;
   /** Header without nav, and no site script (the thanks page). */
   minimal?: boolean;
+  /** Render title, description, canonical and og here: only a post page's fallback sets this. */
+  ownSeo?: boolean;
 }
 
-const { title, description, path, og = [], jsonLd, noindex = false, current, minimal = false } = Astro.props;
-// A blog post's title, description, canonical and social tags come from Wix's SEO service, so the
-// owner can edit them in the dashboard. Such a page fills the `seo-tags` slot and passes none here.
-const wixSeo = Astro.slots.has('seo-tags');
+const { title, description, path, og = [], jsonLd, noindex = false, current, minimal = false, ownSeo = false } = Astro.props;
 const site = 'https://ey-aye.co.uk';
 const nav: [Nav, string, string][] = [
   ['what', '/#what', 'What we do'],
@@ -39,7 +45,8 @@ const nav: [Nav, string, string][] = [
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{wixSeo ? <slot name="seo-tags" /> : (
+<slot name="seo-tags" />
+{ownSeo && (
   <>
     {title && <title>{title}</title>}
     {description && <meta name="description" content={description}>}

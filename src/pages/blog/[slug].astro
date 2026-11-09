@@ -3,7 +3,9 @@
 //
 // This is a Wix "item page": the wixMetadata export, loadSEOTagsServiceConfig and <SEO.Tags> let
 // the post's title, description and social tags be edited in the Wix dashboard, and register the
-// route with Wix's sitemap and SEO tools. Keep those three pieces and the [...slug] rest param.
+// route with Wix's sitemap and SEO tools. Keep those three pieces, and keep the file named
+// [slug].astro: the `slug` key in wixMetadata.identifiers must match the route parameter, and Wix
+// can't fill in a [...slug] rest parameter (it resolved every post to "/blog/[...slug]").
 import Base from '../../layouts/Base.astro';
 import { WIX_APPS } from '@wix/essentials';
 import { SEO } from '@wix/seo/components';
@@ -19,7 +21,7 @@ export const wixMetadata = {
   },
 };
 
-const slug = Astro.params.slug?.replace(/\/$/, '');
+const slug = Astro.params.slug;
 if (!slug) return new Response(null, { status: 404 });
 
 // Behind Wix's proxy the request URL is internal; the public one arrives on x-wix-forwarded-url.
@@ -29,24 +31,51 @@ const pageUrl =
     ? forwardedUrl
     : Astro.url.href;
 
-let post: PostDetail | null = null;
-let seoTagsServiceConfig = null;
-try {
-  [post, seoTagsServiceConfig] = await Promise.all([
-    fetchPostBySlug(slug),
+// Neither Wix call may hold the page up: the post gets 8s, the SEO tags 3s. If the SEO service is
+// slow the page uses its own head tags (below). Server-Timing shows each step in the browser's
+// network panel, to see which one is slow.
+const timings: string[] = [];
+const timed = async <T,>(name: string, ms: number, work: Promise<T>, fallback: T): Promise<T> => {
+  const t0 = Date.now();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const result = await Promise.race([
+    work.catch(() => fallback),
+    new Promise<T>((resolve) => {
+      timer = setTimeout(() => {
+        timings.push(`${name}-timeout;dur=${ms}`);
+        resolve(fallback);
+      }, ms);
+    }),
+  ]);
+  clearTimeout(timer);
+  timings.push(`${name};dur=${Date.now() - t0}`);
+  return result;
+};
+
+const [post, seoTagsServiceConfig] = await Promise.all([
+  timed<PostDetail | null>('post', 8000, fetchPostBySlug(slug), null),
+  timed(
+    'seo',
+    3000,
     loadSEOTagsServiceConfig({
       pageUrl,
       itemType: seoTags.ItemType.BLOG_POST,
       itemData: { slug },
-    }).catch(() => null),
-  ]);
-} catch {
-  // An unhandled throw here would cut the page off mid-stream.
+    }),
+    null,
+  ),
+]);
+
+if (!post) {
+  // A post that didn't arrive in time is "try again", not "not found", so search engines keep it.
+  const status = timings.some((t) => t.startsWith('post-timeout')) ? 503 : 404;
+  return new Response(null, { status, headers: { 'Server-Timing': timings.join(', '), ...(status === 503 ? { 'Retry-After': '30' } : {}) } });
 }
 
-if (!post) return new Response(null, { status: 404 });
-
+const t0 = Date.now();
 const { lead, body, cta } = articleParts(post);
+timings.push(`render;dur=${Date.now() - t0}`);
+Astro.response.headers.set('Server-Timing', timings.join(', '));
 
 // The headline's closing full stop is drawn in Rapeseed.
 const endsWithStop = post.title.endsWith('.');
@@ -57,6 +86,7 @@ const readTime = post.minutesToRead > 0 ? ` · ${post.minutesToRead} min read` :
 const fallbackHead = seoTagsServiceConfig
   ? {}
   : {
+      ownSeo: true,
       title: `${post.seoTitle} — Ey-aye`,
       description: post.seoDescription,
       path: postPath(post.slug),
