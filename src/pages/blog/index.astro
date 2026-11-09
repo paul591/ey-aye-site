@@ -15,14 +15,21 @@ const page = {
   ],
   "current": "blog"
 };
-const posts = await getPosts();
+// Read from Wix Blog on each request; a failed read shows a short note rather than an empty blog.
+let posts: Awaited<ReturnType<typeof getPosts>> = [];
+let failed = false;
+try {
+  posts = await getPosts();
+} catch {
+  failed = true;
+}
 ---
 <Base {...page}>
 <section class="wrap blog-index">
   <h1>Straight answers<span class="stop">.</span></h1>
   <p class="lead" style="max-width: 680px">Plain English on AI for small businesses. What's worth doing, what isn't, and how to keep your customers' data where it belongs while you find out. New post most weeks.</p>
-  <div class="post-grid">
-    {posts.map((post) => <PostCard post={post} />)}
-  </div>
+  {failed
+    ? <p>The posts didn't load just now. Give it a minute and refresh.</p>
+    : <div class="post-grid">{posts.map((post) => <PostCard post={post} />)}</div>}
 </section>
 </Base>

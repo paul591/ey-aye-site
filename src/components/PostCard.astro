@@ -1,17 +1,18 @@
 ---
-import { cardImage, longDate, postPath, type Post } from '../lib/posts';
+import { cardImage, longDate, postPath, type PostSummary } from '../lib/posts';
 
 interface Props {
-  post: Post;
+  post: PostSummary;
   /** Show the one-line summary under the title. */
   summary?: boolean;
 }
 const { post, summary = true } = Astro.props;
-const href = postPath(post);
+const href = postPath(post.slug);
+const minutes = post.minutesToRead > 0 ? ` · ${post.minutesToRead} min` : '';
 ---
 <article class="post">
-  <a href={href} class="photo thumb" aria-hidden="true" tabindex="-1"><img src={cardImage(post)} alt="" width="1200" height="630" loading="lazy"></a>
-  <div class="meta">{longDate(post.data.date)} · {post.data.readTime} min</div>
-  <h3><a href={href}>{post.data.title}</a></h3>
-  {summary && <p class="small">{post.data.summary}</p>}
+  {post.coverUrl && <a href={href} class="photo thumb" aria-hidden="true" tabindex="-1"><img src={cardImage(post)} alt="" width="1200" height="630" loading="lazy"></a>}
+  <div class="meta">{longDate(post.dateISO)}{minutes}</div>
+  <h3><a href={href}>{post.title}</a></h3>
+  {summary && post.excerpt && <p class="small">{post.excerpt}</p>}
 </article>

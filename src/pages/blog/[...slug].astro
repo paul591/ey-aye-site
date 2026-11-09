@@ -1,0 +1,102 @@
+---
+// A blog post, read from Wix Blog on each request.
+//
+// This is a Wix "item page": the wixMetadata export, loadSEOTagsServiceConfig and <SEO.Tags> let
+// the post's title, description and social tags be edited in the Wix dashboard, and register the
+// route with Wix's sitemap and SEO tools. Keep those three pieces and the [...slug] rest param.
+import Base from '../../layouts/Base.astro';
+import { WIX_APPS } from '@wix/essentials';
+import { SEO } from '@wix/seo/components';
+import { loadSEOTagsServiceConfig } from '@wix/seo/services';
+import { seoTags } from '@wix/seo';
+import { SITE, articleParts, cardImage, fetchPostBySlug, headerImage, isoDate, longDate, postPath, type PostDetail } from '../../lib/posts';
+
+export const wixMetadata = {
+  appDefId: WIX_APPS.blogs.id,
+  pageIdentifier: WIX_APPS.blogs.postPageMetadata.pageIdentifier,
+  identifiers: {
+    slug: WIX_APPS.blogs.postPageMetadata.identifiers.slug,
+  },
+};
+
+const slug = Astro.params.slug?.replace(/\/$/, '');
+if (!slug) return new Response(null, { status: 404 });
+
+// Behind Wix's proxy the request URL is internal; the public one arrives on x-wix-forwarded-url.
+const forwardedUrl = Astro.request.headers.get('x-wix-forwarded-url');
+const pageUrl =
+  forwardedUrl && URL.canParse(forwardedUrl) && /^https?:$/.test(new URL(forwardedUrl).protocol)
+    ? forwardedUrl
+    : Astro.url.href;
+
+let post: PostDetail | null = null;
+let seoTagsServiceConfig = null;
+try {
+  [post, seoTagsServiceConfig] = await Promise.all([
+    fetchPostBySlug(slug),
+    loadSEOTagsServiceConfig({
+      pageUrl,
+      itemType: seoTags.ItemType.BLOG_POST,
+      itemData: { slug },
+    }).catch(() => null),
+  ]);
+} catch {
+  // An unhandled throw here would cut the page off mid-stream.
+}
+
+if (!post) return new Response(null, { status: 404 });
+
+const { lead, body, cta } = articleParts(post);
+
+// The headline's closing full stop is drawn in Rapeseed.
+const endsWithStop = post.title.endsWith('.');
+const headline = endsWithStop ? post.title.slice(0, -1) : post.title;
+const readTime = post.minutesToRead > 0 ? ` · ${post.minutesToRead} min read` : '';
+
+// Only when Wix's SEO service didn't answer: the site's own head tags, as before the move.
+const fallbackHead = seoTagsServiceConfig
+  ? {}
+  : {
+      title: `${post.seoTitle} — Ey-aye`,
+      description: post.seoDescription,
+      path: postPath(post.slug),
+      og: [
+        ['og:title', post.seoTitle],
+        ['og:description', post.seoDescription],
+        ['og:url', SITE + postPath(post.slug)],
+        ['og:type', 'article'],
+        ...(post.coverUrl ? [['og:image', cardImage(post)], ['og:image:width', '1200'], ['og:image:height', '630']] : []),
+      ] as [string, string][],
+      jsonLd: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        author: { '@type': 'Organization', name: 'Ey-aye' },
+        publisher: { '@type': 'Organization', name: 'Ey-aye' },
+        datePublished: isoDate(post.dateISO),
+        ...(post.updatedISO ? { dateModified: isoDate(post.updatedISO) } : {}),
+        mainEntityOfPage: SITE + postPath(post.slug),
+      }),
+    };
+---
+<Base {...fallbackHead} current="blog">
+{seoTagsServiceConfig && <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />}
+<article class="wrap article">
+  <header>
+    <div class="meta">Straight answers · <time datetime={post.dateISO}>{longDate(post.dateISO)}</time>{readTime}</div>
+    <h1>{headline}{endsWithStop && <span class="stop">.</span>}</h1>
+    {lead && <p class="lead" set:html={lead} />}
+  </header>
+
+  {post.coverUrl && <div class="photo hero-img"><img src={headerImage(post)} alt={post.coverAlt} width="1600" height="900"></div>}
+
+  <div class="body" set:html={body} />
+
+  {cta && (
+    <div class="cta">
+      <div class="line" set:html={cta.line} />
+      <a href={cta.href} class="btn" set:html={cta.button} />
+    </div>
+  )}
+</article>
+</Base>

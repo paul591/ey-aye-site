@@ -1,72 +1,54 @@
 # Ey-aye — ey-aye.co.uk
 
-An [Astro](https://astro.build) site served by a Cloudflare Worker. Every push to `main` builds and deploys it through Workers Builds (`npx wrangler deploy`, which runs `npm run build` first). If the build fails, nothing deploys and the live site stays as it was.
+> **This is the `wix` branch**: the site hosted on Wix, with the blog in Wix Blog. `main` is still the Cloudflare site, and pushing this branch doesn't change it.
+
+An [Astro](https://astro.build) site, server-rendered on Wix's hosting (`@wix/astro` with the Wix hosting adapter). Pages render on each request, so a post published in the Wix dashboard is live straight away, with no rebuild. Code changes go live when a build is released to Wix.
 
 ```sh
-npm install
-npm run dev       # http://localhost:4321, updates as you type; shows drafts and future-dated posts
-npm run build     # builds dist/, exactly what goes live
-npm run preview   # builds, then runs the Worker locally (form, tracking, /stats) at http://localhost:8787
+npm install --ignore-scripts
+cp .env.example .env.local   # once: the build checks these exist (the real values are set by Wix at release)
+npm run build                # builds dist/ and .wix/, what gets released
+npm run release              # wix release: needs `npx wix login` once
 ```
+
+`npm run dev` needs the Wix CLI login too, since every page reads from Wix.
+
+Site: `wix.config.json` (Wix site `e471bc0b-...`). Dashboard: https://manage.wix.com/dashboard/e471bc0b-830d-4071-899b-2441d9760126
 
 ## Writing a post
 
-1. Create `src/content/blog/<slug>.md`. The file name is the address: `customer-data.md` becomes `/blog/customer-data/`. Keep it short, lower case, hyphens.
-2. Add two images to `public/assets/blog/`:
-   - `<slug>.jpg`, 1600×900, the photo at the top of the post
-   - `<slug>-hero.jpg`, 1200×630, the branded card used on the blog page, home page and in social previews
-3. Fill in the details at the top, then write the post underneath in Markdown:
+Posts are written and published in Wix: **Dashboard → Blog → Posts** (https://manage.wix.com/dashboard/e471bc0b-830d-4071-899b-2441d9760126/blog/posts). The address is the post's URL slug, under `/blog/<slug>/`.
 
-```markdown
----
-title: "Will it leak my customers' data? The honest version."
-description: "What shows in Google: one or two sentences, under about 160 characters."
-socialDescription: "Optional. What shows on Facebook and LinkedIn, if different from description."
-summary: "The line under the title on the blog page."
-lead: "The intro paragraph under the headline."
-date: 2026-11-13
-readTime: 5
-heroAlt: "Describe the top photo for someone who can't see it."
-cta: "The line in the box at the end of the post."
-ctaButton: "Optional. Defaults to Book a look-round."
-draft: true
----
+- **Cover image:** 1600×900. It's the photo at the top of the post, and the card on the blog and home pages. Set its alt text.
+- **Excerpt:** the line under the title on the blog page.
+- **SEO (Post settings → SEO):** the Google description and social description. A title ending in a full stop gets the Rapeseed stop automatically.
 
-## A heading
+Write the post in the Wix editor with these conventions, and the site turns each into its part of the design:
 
-A paragraph. **Bold**, *italic*, [a link](/half-day/).
+| In the editor | On the site |
+|---|---|
+| The first paragraph | The lead, under the headline |
+| A quote that starts with a bold **Aye** or **Nay** | The aye/nay verdict box |
+| An image, then a line in italics | The image with that line as its caption |
+| A divider, then a last paragraph of bold text followed by a link | The teal call-to-action box (the bold text is the line, the link is the button) |
 
-- A list item
-- Another
+Links to `https://ey-aye.co.uk/...` work on any address the site is served from. Never change a published post's slug: the address changes, and Relay would treat it as a new post.
 
-<div class="verdict-box"><b class="aye">aye</b><span>to the thing worth doing.</span></div>
-```
-
-4. `npm run dev` to read it as it will look. Remove `draft: true` (or set it to `false`) when it's ready, commit and push.
-
-The build checks every post: a missing field, a date that isn't a date, or a missing image stops it with a message saying which post and what's wrong.
-
-- A title ending in a full stop gets the Rapeseed stop automatically.
-- Plain HTML works anywhere in a post: verdict boxes (`aye` or `nay`), figures with captions (see `built-our-own.md`).
-- **Drafts** (`draft: true`) and **posts dated in the future** only show in `npm run dev`. A future-dated post goes live with the first build on or after its date, so push something that day (or rebuild from the Cloudflare dashboard).
-- **Changing a post later:** add `updated: 2026-12-01` so Google and the sitemap see the change.
-- Never rename a post's file once it's live: the address changes, and Relay would treat it as a new post.
-
-Everything else updates itself: the blog page, the newest three on the home page, the sitemap (with dates), the RSS feed at `/rss.xml`, and each post's title, description, social tags and structured data.
+Everything else updates itself: the blog page, the newest three on the home page, the sitemap, the RSS feed at `/rss.xml`, and each post's title, description and social tags (which you can edit per post in the dashboard).
 
 ## Layout
 
 ```text
 src/
-  content/blog/      One Markdown file per post
-  content.config.ts  The fields a post must have
   layouts/Base.astro Head, header, nav and footer for every page
   components/        PostCard (the blog cards)
-  lib/posts.ts       Which posts are published, dates, image paths
+  lib/posts.ts       Reads posts from Wix Blog; dates, image sizes, the article conventions above
+  wix/               Wix's shipped data layer for Wix Blog (copy as-is)
   pages/             One file per page; folder/index.astro → /folder/
   styles/style.css   The brand stylesheet (all colours and type live here)
 public/              Copied as-is: assets/, favicon.svg, robots.txt, _headers, site.js
-worker/index.js      The Worker (below)
+worker/index.js      The Cloudflare Worker (below), not used on Wix
+cloudflare/          The Worker's wrangler config, moved aside so the Wix build ignores it
 ```
 
 ## Adding or editing a page
@@ -74,6 +56,9 @@ worker/index.js      The Worker (below)
 Pages are in `src/pages/`, one folder per page with an `index.astro`. Each starts with a `page` block (title, description, social tags, which nav item is highlighted); the rest is the page's HTML. To add one, copy `src/pages/build/index.astro` to `src/pages/newpage/index.astro` and change both parts. It appears in the sitemap automatically. Header, nav and footer are in `src/layouts/Base.astro`, once.
 
 ## The Worker (`worker/index.js`)
+
+**Not running on Wix.** On this branch the enquiry form, tagged-landing counts and `/stats` have no server behind them yet. They need moving to Wix (Wix Forms for the enquiry form) before this branch can replace `main`.
+
 
 - **Tagged landings.** A visit that arrives from another site with `utm_*` tags, `fbclid` or `gclid` is counted in the D1 database `ey-aye-site` (page, tags, referring site, country). No cookies, no IP address, nothing in the browser.
 - **Contact form.** The form on the home page posts to `/api/enquiry`. The Worker saves it to D1 and emails it to the `ENQUIRY_TO` secret (a verified Email Routing destination) with Reply-To set to the sender, then redirects to `/thanks.html`.

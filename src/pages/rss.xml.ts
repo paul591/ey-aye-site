@@ -8,10 +8,10 @@ export const GET: APIRoute = async () =>
     description: 'Plain-English answers on AI for small businesses in Yorkshire.',
     site: 'https://ey-aye.co.uk',
     items: (await getPosts()).map((p) => ({
-      title: p.data.title,
-      description: p.data.summary,
-      pubDate: p.data.date,
-      link: postPath(p),
+      title: p.title,
+      description: p.excerpt,
+      pubDate: new Date(p.dateISO),
+      link: postPath(p.slug),
     })),
     customData: '<language>en-gb</language>',
   });

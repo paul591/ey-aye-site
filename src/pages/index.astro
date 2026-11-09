@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
-import { getPosts } from '../lib/posts';
+import { getLatestPosts, type PostSummary } from '../lib/posts';
 
 const page = {
   "title": "Ey-aye — Yorkshire-built AI for Yorkshire businesses",
@@ -16,7 +16,11 @@ const page = {
   ],
   "jsonLd": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfessionalService\",\n  \"name\": \"Ey-aye\",\n  \"description\": \"Applied AI for small businesses in Harrogate and North Yorkshire: a free look-round, a half-day with your own data, and fixed-price builds.\",\n  \"url\": \"https://ey-aye.co.uk/\",\n  \"email\": \"paul@ey-aye.co.uk\",\n  \"founder\": {\"@type\": \"Person\", \"name\": \"Paul Lofthouse\"},\n  \"parentOrganization\": {\"@type\": \"Organization\", \"name\": \"Loftsoft\"},\n  \"areaServed\": [\"Harrogate\", \"Knaresborough\", \"Ripon\", \"Wetherby\", \"North Yorkshire\"],\n  \"address\": {\"@type\": \"PostalAddress\", \"addressLocality\": \"Harrogate\", \"addressRegion\": \"North Yorkshire\", \"addressCountry\": \"GB\"}\n}"
 };
-const latest = (await getPosts()).slice(0, 3);
+// The three newest posts, from Wix Blog. If the read fails the section is left out.
+let latest: PostSummary[] = [];
+try {
+  latest = await getLatestPosts(3);
+} catch {}
 ---
 <Base {...page}>
 
@@ -157,6 +161,7 @@ const latest = (await getPosts()).slice(0, 3);
   </div>
 </section>
 
+{latest.length > 0 && (
 <section class="wrap blog" id="blog">
   <div class="blog-head">
     <h2>Straight answers</h2>
@@ -166,6 +171,7 @@ const latest = (await getPosts()).slice(0, 3);
     {latest.map((post) => <PostCard post={post} summary={false} />)}
   </div>
 </section>
+)}
 
 <section class="dark book" id="book">
   <div class="wrap">

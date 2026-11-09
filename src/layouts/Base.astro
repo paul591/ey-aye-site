@@ -5,8 +5,8 @@ import '../styles/style.css';
 export type Nav = 'what' | 'capabilities' | 'how-we-work' | 'work' | 'blog';
 
 interface Props {
-  /** Full <title>. */
-  title: string;
+  /** Full <title>. Leave out on a page whose head tags come from Wix (the `seo-tags` slot). */
+  title?: string;
   description?: string;
   /** Path for the canonical link, e.g. `/blog/`. Omit for pages that shouldn't have one. */
   path?: string;
@@ -22,6 +22,9 @@ interface Props {
 }
 
 const { title, description, path, og = [], jsonLd, noindex = false, current, minimal = false } = Astro.props;
+// A blog post's title, description, canonical and social tags come from Wix's SEO service, so the
+// owner can edit them in the dashboard. Such a page fills the `seo-tags` slot and passes none here.
+const wixSeo = Astro.slots.has('seo-tags');
 const site = 'https://ey-aye.co.uk';
 const nav: [Nav, string, string][] = [
   ['what', '/#what', 'What we do'],
@@ -36,11 +39,15 @@ const nav: [Nav, string, string][] = [
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}</title>
-{description && <meta name="description" content={description}>}
+{wixSeo ? <slot name="seo-tags" /> : (
+  <>
+    {title && <title>{title}</title>}
+    {description && <meta name="description" content={description}>}
+    {path && <link rel="canonical" href={site + path}>}
+    {og.map(([property, content]) => <meta property={property} content={content}>)}
+  </>
+)}
 {noindex && <meta name="robots" content="noindex">}
-{path && <link rel="canonical" href={site + path}>}
-{og.map(([property, content]) => <meta property={property} content={content}>)}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="alternate" type="application/rss+xml" title="Straight answers — the Ey-aye blog" href="/rss.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">

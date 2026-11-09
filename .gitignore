@@ -11,3 +11,6 @@ assets/blog/originals/
 node_modules/
 dist/
 .astro/
+
+# Wix
+.wix/
