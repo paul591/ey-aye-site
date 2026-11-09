@@ -1,0 +1,56 @@
+---
+// /clients/: a signed-in client's documents. Anyone not signed in goes to Wix's login page and
+// comes back here afterwards. Sign-up is approval-only (Dashboard → Settings → Member signup), so
+// only people Paul adds can get in, and the list only ever shows rows with their own member ID.
+import Base from '../../layouts/Base.astro';
+import { currentClient, documentsFor, longDate, LOGIN_URL, LOGOUT_URL, type ClientDocument } from '../../lib/clients';
+
+// Personal page: never cached anywhere.
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
+const client = await currentClient();
+if (!client) return Astro.redirect(LOGIN_URL);
+
+let docs: ClientDocument[] = [];
+let failed = false;
+try {
+  docs = await documentsFor(client);
+} catch (err) {
+  console.error('client documents failed', err);
+  failed = true;
+}
+const firstName = client.name.split(' ')[0];
+---
+<Base title="Your documents — Ey-aye" noindex>
+<section class="wrap hero client-area">
+  <div class="hero-copy">
+    <p class="kicker teal">Client area</p>
+    <h1>{firstName ? `Ey up, ${firstName}` : 'Ey up'}<span class="stop">.</span></h1>
+    <p class="lead">Everything we've shared with you, newest first. Links last fifteen minutes, so download from here rather than bookmarking them.</p>
+  </div>
+
+  {failed ? (
+    <p class="client-empty">Your documents won't load just now. Try again in a minute, or email <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a> and we'll send them over.</p>
+  ) : docs.length === 0 ? (
+    <p class="client-empty">Nothing here yet. When we share something with you, it'll show up on this page.</p>
+  ) : (
+    <ul class="doc-list">
+      {docs.map((d) => (
+        <li class="doc">
+          <div class="doc-text">
+            <a class="doc-title" href={`/clients/doc/${d.id}`}>{d.title}</a>
+            <span class="doc-meta">{[longDate(d.date), d.fileName].filter(Boolean).join(' · ')}</span>
+            {d.note && <p class="doc-note">{d.note}</p>}
+          </div>
+          <a class="btn btn-outline doc-btn" href={`/clients/doc/${d.id}`} aria-label={`Download ${d.title}`}>Download</a>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <form method="post" action={LOGOUT_URL} class="client-signout">
+    <span>Signed in as {client.email || client.name}.</span>
+    <button type="submit" class="btn btn-outline">Sign out</button>
+  </form>
+</section>
+</Base>

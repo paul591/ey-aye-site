@@ -36,6 +36,19 @@ Links to `https://ey-aye.co.uk/...` work on any address the site is served from.
 
 Everything else updates itself: the blog page, the newest three on the home page, Wix's sitemap, the RSS feeds at `/rss.xml` (ours) and `/blog-feed.xml` (Wix's), and each post's title, description and social tags (which you can edit per post in the dashboard).
 
+## Client area (`/clients/`)
+
+Clients sign in with Wix's own login page (the **Client login** link in the footer, which includes "forgotten password"), then see the documents shared with them. Only people you add can sign in: member sign-up must be set to approval-only in **Dashboard → Settings → Member signup**.
+
+**Adding a client:** Dashboard → **Contacts** (or **Site Members**) → add them as a site member with their email, then send them the "set your password" email from their member page. Each client gets their own login.
+
+**Sharing a document:**
+
+1. Upload the file to **Media** as a **private** file (in the `client-documents` folder). Private files can't be opened by URL; the site makes a 15-minute link for the right client only.
+2. In **CMS → ClientDocuments**, add a row: `title`, the client's `memberId` (from their member page, or ask Claude), the file's `fileId` (the file name Wix gives it, like `b35103_….pdf`), and optionally `fileName` (what it downloads as), `note`, `documentDate` and `clientEmail` (just for your reference).
+
+The pages: `src/pages/clients/index.astro` (the list) and `src/pages/clients/doc/[id].ts` (the download check), both using `src/lib/clients.ts`. The collection is admin-only; the site reads it with elevated permissions and always filters by the member ID from the visitor's own login, never by anything in the request. Tick **Hide from search engines** for `/clients` in SEO Settings → Main Pages.
+
 ## Layout
 
 ```text
@@ -43,6 +56,7 @@ src/
   layouts/Base.astro Head, header, nav and footer for every page
   components/        PostCard (the blog cards)
   lib/posts.ts       Reads posts from Wix Blog; dates, image sizes, the article conventions above
+  lib/clients.ts     The client area: who's signed in, their documents, download links
   wix/               Wix's shipped data layer for Wix Blog (copy as-is)
   pages/             One file per page; folder/index.astro → /folder/
   styles/style.css   The brand stylesheet (all colours and type live here)
