@@ -82,6 +82,38 @@ const endsWithStop = post.title.endsWith('.');
 const headline = endsWithStop ? post.title.slice(0, -1) : post.title;
 const readTime = post.minutesToRead > 0 ? ` · ${post.minutesToRead} min read` : '';
 
+// Wix's headless SEO service leaves two gaps on posts, though the dashboard has both: no og:image
+// (so Facebook and LinkedIn previews have no picture) and an author with no name in the
+// BlogPosting structured data. Fill them from the post itself, without touching anything Wix sent.
+type SeoTag = { type?: string; props?: Record<string, string>; children?: string; disabled?: boolean };
+const seoConfig = (() => {
+  if (!seoTagsServiceConfig || !post) return seoTagsServiceConfig;
+  const tags = [...((seoTagsServiceConfig.tags ?? []) as SeoTag[])];
+  const hasProp = (p: string) => tags.some((t) => t.type === 'meta' && !t.disabled && t.props?.property === p);
+  const hasName = (n: string) => tags.some((t) => t.type === 'meta' && !t.disabled && t.props?.name === n);
+  if (post.coverUrl) {
+    if (!hasProp('og:image')) {
+      tags.push(
+        { type: 'meta', props: { property: 'og:image', content: cardImage(post) } },
+        { type: 'meta', props: { property: 'og:image:width', content: '1200' } },
+        { type: 'meta', props: { property: 'og:image:height', content: '630' } },
+      );
+    }
+    if (!hasName('twitter:image')) tags.push({ type: 'meta', props: { name: 'twitter:image', content: cardImage(post) } });
+  }
+  for (const t of tags) {
+    if (t.type !== 'script' || !t.children?.includes('BlogPosting')) continue;
+    try {
+      const ld = JSON.parse(t.children);
+      if (!ld.author?.name) ld.author = { '@type': 'Person', name: 'Paul Lofthouse', url: 'https://www.ey-aye.co.uk/#about' };
+      if (!ld.image && post.coverUrl) ld.image = cardImage(post);
+      ld.publisher = { ...(ld.publisher ?? {}), '@type': 'Organization', name: 'Ey-aye', logo: { '@type': 'ImageObject', url: 'https://www.ey-aye.co.uk/assets/logo.png' } };
+      t.children = JSON.stringify(ld);
+    } catch {}
+  }
+  return { ...seoTagsServiceConfig, tags } as typeof seoTagsServiceConfig;
+})();
+
 // Only when Wix's SEO service didn't answer: the site's own head tags, as before the move.
 const fallbackHead = seoTagsServiceConfig
   ? {}
@@ -101,7 +133,7 @@ const fallbackHead = seoTagsServiceConfig
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
-        author: { '@type': 'Organization', name: 'Ey-aye' },
+        author: { '@type': 'Person', name: 'Paul Lofthouse', url: 'https://www.ey-aye.co.uk/#about' },
         publisher: { '@type': 'Organization', name: 'Ey-aye' },
         datePublished: isoDate(post.dateISO),
         ...(post.updatedISO ? { dateModified: isoDate(post.updatedISO) } : {}),
@@ -110,7 +142,7 @@ const fallbackHead = seoTagsServiceConfig
     };
 ---
 <Base {...fallbackHead} current="blog">
-{seoTagsServiceConfig && <WixSeoTags seoTagsServiceConfig={seoTagsServiceConfig} slot="seo-tags" />}
+{seoConfig && <WixSeoTags seoTagsServiceConfig={seoConfig} slot="seo-tags" />}
 <article class="wrap article">
   <header>
     <div class="meta">Straight answers · <time datetime={post.dateISO}>{longDate(post.dateISO)}</time>{readTime}</div>
