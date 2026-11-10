@@ -39,7 +39,7 @@ export const longDate = (iso: string) =>
 export const isoDate = (iso: string) => (iso ? new Date(iso).toISOString().slice(0, 10) : '');
 
 /** The same addresses as before the move: /blog/<slug>/ */
-export const postPath = (slug: string) => `/blog/${slug.split('/').map(encodeURIComponent).join('/')}/`;
+export const postPath = (slug: string) => `/blog/${slug.split('/').map(encodeURIComponent).join('/')}`;
 
 /** The cover at the post page's size (1600×900) and the card/social size (1200×630). */
 export const headerImage = (p: PostSummary) => imgSrc(p.coverUrl, 1600, 900);

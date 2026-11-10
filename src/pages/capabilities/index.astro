@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 const page = {
   "title": "What we can build — Ey-aye",
   "description": "The full list of what Ey-aye can build for a Yorkshire business: reading, writing, one place to ask, agents, dashboards, inputs from anywhere, machine data, safety, and bespoke MCP servers. Each with an aye and a nay.",
-  "path": "/capabilities/",
+  "path": "/capabilities",
   "og": [
     ["og:title", "What we can build — Ey-aye"],
     ["og:description", "The full list of what Ey-aye can build for a Yorkshire business: reading, writing, one place to ask, agents, dashboards, inputs from anywhere, machine data, safety, and bespoke MCP servers. Each with an aye and a nay."],
@@ -17,7 +17,7 @@ const page = {
 <Base {...page}>
 <section class="wrap page-intro">
   <h1>What we can build. All of it, in plain English<span class="stop">.</span></h1>
-  <p class="lead">The home page keeps things simple on purpose. This page is the full list, for anyone who wants to know exactly what's possible before they book an hour. Every one of these has been built, either for a client or for one of our own businesses. Each comes with an aye and a nay, because knowing where a thing stops is half of knowing what it's for.</p>
+  <p class="lead">The home page keeps things simple on purpose. This page is the full list, for anyone who wants to know exactly what's possible before they book an hour. We build these for businesses across Harrogate, Knaresborough, Ripon, Wetherby and the rest of North Yorkshire. Every one of these has been built, either for a client or for one of our own businesses. Each comes with an aye and a nay, because knowing where a thing stops is half of knowing what it's for.</p>
 </section>
 
 <section class="wrap cap-list">
@@ -35,7 +35,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>it won't reply to anyone or move money without you seeing it first.</span></div>
       </div>
       <div class="systems"><span>Email</span><span>PDF &amp; Word</span><span>CSV</span><span>Scans</span><span>Supplier portals</span></div>
-      <div class="example">Example: the <a href="/work/#bodyworks">morning brief</a> reads the night's bookings and intake forms before the first client.</div>
+      <div class="example">Example: the <a href="/work#bodyworks">morning brief</a> reads the night's bookings and intake forms before the first client.</div>
     </div>
   </article>
 
@@ -52,7 +52,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>it doesn't press send. That's the rule, and it's a good one.</span></div>
       </div>
       <div class="systems"><span>Quotes</span><span>Proposals</span><span>Customer replies</span><span>Product copy</span><span>Reports</span></div>
-      <div class="example">Example: <a href="/work/#purple-helmet">Purple Helmet</a> runs its product copy, campaigns and customer replies this way.</div>
+      <div class="example">Example: <a href="/work#purple-helmet">Purple Helmet</a> runs its product copy, campaigns and customer replies this way.</div>
     </div>
   </article>
 
@@ -69,7 +69,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>it can't see what isn't written down anywhere. Paper stays paper until it's scanned.</span></div>
       </div>
       <div class="systems"><span>Wix</span><span>Shopify</span><span>Xero</span><span>QuickBooks</span><span>HubSpot</span><span>Google Drive</span><span>SharePoint</span><span>SQL</span><span>Job systems</span></div>
-      <div class="example">Example: <a href="/work/#pit-wall">Pit Wall</a> joins Shopify, Meta Ads, Klaviyo and print costs. <a href="/work/#loftsoft-racing">Loftsoft Racing</a> does it for race data.</div>
+      <div class="example">Example: <a href="/work#pit-wall">Pit Wall</a> joins Shopify, Meta Ads, Klaviyo and print costs. <a href="/work#loftsoft-racing">Loftsoft Racing</a> does it for race data.</div>
     </div>
   </article>
 
@@ -86,7 +86,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>it won't touch money, refunds or a customer complaint without a person's say-so.</span></div>
       </div>
       <div class="systems"><span>Shopify</span><span>Xero</span><span>Courier APIs</span><span>CRM</span><span>Email</span><span>Calendar</span></div>
-      <div class="example">Example: the Friday chase and the quote-from-the-van on the <a href="/blog/no-chatbot/">chatbot post</a>.</div>
+      <div class="example">Example: the Friday chase and the quote-from-the-van on the <a href="/blog/no-chatbot">chatbot post</a>.</div>
     </div>
   </article>
 
@@ -103,7 +103,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>no vanity metrics. If a number doesn't change a decision, it doesn't go on the page.</span></div>
       </div>
       <div class="systems"><span>Web dashboards</span><span>Role-based access</span><span>Mobile-friendly</span><span>Weekly AI notes</span></div>
-      <div class="example">Example: <a href="/work/#pit-wall">Pit Wall</a>, with its race engineer's notes.</div>
+      <div class="example">Example: <a href="/work#pit-wall">Pit Wall</a>, with its race engineer's notes.</div>
     </div>
   </article>
 
@@ -136,7 +136,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>it won't replace the engineer who knows the machine. It gives them the hour back they spent in spreadsheets.</span></div>
       </div>
       <div class="systems"><span>CSV &amp; log files</span><span>Modbus / OPC</span><span>Telemetry</span><span>Custom hardware</span><span>Embedded</span></div>
-      <div class="example">Example: <a href="/work/#loftsoft-racing">Loftsoft Racing</a>, where a driver asks about camber at two degrees of roll and gets the answer from the car's own data.</div>
+      <div class="example">Example: <a href="/work#loftsoft-racing">Loftsoft Racing</a>, where a driver asks about camber at two degrees of roll and gets the answer from the car's own data.</div>
     </div>
   </article>
 
@@ -152,7 +152,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>no customer data in a consumer AI app, ever. That one's non-negotiable.</span></div>
       </div>
       <div class="systems"><span>UK GDPR</span><span>Access control</span><span>Audit log</span><span>Approvals</span><span>Staff training</span></div>
-      <div class="example">More on the <a href="/blog/customer-data/">customer data post</a>, and it's half of what the <a href="/half-day/">half-day</a> covers.</div>
+      <div class="example">More on the <a href="/blog/customer-data">customer data post</a>, and it's half of what the <a href="/half-day">half-day</a> covers.</div>
     </div>
   </article>
 
@@ -169,7 +169,7 @@ const page = {
         <div class="pair-row"><b class="nay">nay</b><span>we won't build one until the governance question has an answer. It's the first thing we ask.</span></div>
       </div>
       <div class="systems"><span>MCP</span><span>REST &amp; GraphQL</span><span>SQL</span><span>OAuth</span><span>On-prem or cloud</span></div>
-      <div class="example">Example: the <a href="/work/#automotive">automotive platform</a> (under NDA) and <a href="/work/#loftsoft-racing">Loftsoft Racing</a>.</div>
+      <div class="example">Example: the <a href="/work#automotive">automotive platform</a> (under NDA) and <a href="/work#loftsoft-racing">Loftsoft Racing</a>.</div>
     </div>
   </article>
 

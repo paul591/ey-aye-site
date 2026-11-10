@@ -250,6 +250,9 @@ section { padding-top: 80px; padding-bottom: 80px; }
 .footer-col a { color: var(--coal); text-decoration: none; }
 .footer-col a:hover { color: var(--teal); text-decoration: underline; }
 .footer-col .wordmark { font-size: 24px; margin-bottom: 4px; }
+.footer-col .social { display: flex; gap: 10px; margin: 2px 0; }
+.footer-col .social a { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--teal); color: var(--stone); }
+.footer-col .social a:hover { background: var(--teal-dark); color: var(--white); text-decoration: none; }
 .footer-col .strap { max-width: 280px; line-height: 1.45; }
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--flag); }
 .footer-bottom a { color: var(--flag); }

@@ -15,7 +15,7 @@ const page = {
     ["og:type", "website"],
     ["og:image", "https://ey-aye.co.uk/assets/og.png"]
   ],
-  "jsonLd": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfessionalService\",\n  \"name\": \"Ey-aye\",\n  \"description\": \"Applied AI for small businesses in Harrogate and North Yorkshire: a free look-round, a half-day with your own data, and fixed-price builds.\",\n  \"url\": \"https://ey-aye.co.uk/\",\n  \"email\": \"paul@ey-aye.co.uk\",\n  \"founder\": {\"@type\": \"Person\", \"name\": \"Paul Lofthouse\"},\n  \"parentOrganization\": {\"@type\": \"Organization\", \"name\": \"Loftsoft\"},\n  \"areaServed\": [\"Harrogate\", \"Knaresborough\", \"Ripon\", \"Wetherby\", \"North Yorkshire\"],\n  \"address\": {\"@type\": \"PostalAddress\", \"addressLocality\": \"Harrogate\", \"addressRegion\": \"North Yorkshire\", \"addressCountry\": \"GB\"}\n}"
+  "jsonLd": "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfessionalService\",\n  \"@id\": \"https://www.ey-aye.co.uk/#business\",\n  \"name\": \"Ey-aye\",\n  \"alternateName\": \"Ey-aye Yorkshire-built AI\",\n  \"description\": \"Applied AI consultancy for small businesses in Harrogate and North Yorkshire: a free look-round, a half-day with your own data, and fixed-price builds.\",\n  \"url\": \"https://www.ey-aye.co.uk/\",\n  \"email\": \"paul@ey-aye.co.uk\",\n  \"logo\": \"https://www.ey-aye.co.uk/assets/logo.png\",\n  \"image\": \"https://www.ey-aye.co.uk/assets/og.png\",\n  \"sameAs\": [\n    \"https://www.facebook.com/eyayeuk\",\n    \"https://www.instagram.com/eyayeuk\"\n  ],\n  \"founder\": {\n    \"@type\": \"Person\",\n    \"name\": \"Paul Lofthouse\"\n  },\n  \"parentOrganization\": {\n    \"@type\": \"Organization\",\n    \"name\": \"Loftsoft\"\n  },\n  \"areaServed\": [\n    {\n      \"@type\": \"City\",\n      \"name\": \"Harrogate\"\n    },\n    {\n      \"@type\": \"City\",\n      \"name\": \"Knaresborough\"\n    },\n    {\n      \"@type\": \"City\",\n      \"name\": \"Ripon\"\n    },\n    {\n      \"@type\": \"City\",\n      \"name\": \"Wetherby\"\n    },\n    {\n      \"@type\": \"AdministrativeArea\",\n      \"name\": \"North Yorkshire\"\n    }\n  ],\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"addressLocality\": \"Harrogate\",\n    \"addressRegion\": \"North Yorkshire\",\n    \"addressCountry\": \"GB\"\n  },\n  \"knowsAbout\": [\n    \"Applied AI\",\n    \"AI consulting\",\n    \"Business automation\",\n    \"AI for small businesses\"\n  ],\n  \"hasOfferCatalog\": {\n    \"@type\": \"OfferCatalog\",\n    \"name\": \"AI services\",\n    \"itemListElement\": [\n      {\n        \"@type\": \"Offer\",\n        \"url\": \"https://www.ey-aye.co.uk/look-round\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"The look-round\",\n          \"description\": \"A free visit to see where AI fits your business and where it doesn't.\"\n        }\n      },\n      {\n        \"@type\": \"Offer\",\n        \"url\": \"https://www.ey-aye.co.uk/half-day\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"The half-day\",\n          \"description\": \"A half-day working with your own data to show what AI can and can't do for you.\"\n        }\n      },\n      {\n        \"@type\": \"Offer\",\n        \"url\": \"https://www.ey-aye.co.uk/build\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"The build\",\n          \"description\": \"Fixed-price AI tools built around how your business already works.\"\n        }\n      },\n      {\n        \"@type\": \"Offer\",\n        \"url\": \"https://www.ey-aye.co.uk/fed-and-watered\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"Fed and watered\",\n          \"description\": \"Ongoing care and upkeep for the AI tools we've built.\"\n        }\n      },\n      {\n        \"@type\": \"Offer\",\n        \"url\": \"https://www.ey-aye.co.uk/ai-lead\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"Fractional AI lead\",\n          \"description\": \"A senior AI lead a few days a month, without the full-time salary.\"\n        }\n      }\n    ]\n  }\n}"
 };
 // The three newest posts, from Wix Blog. If the read fails the section is left out.
 let latest: PostSummary[] = [];
@@ -76,37 +76,37 @@ try {
 <section class="wrap offers" id="what">
   <div class="offers-intro">
     <h2>What we do</h2>
-    <p class="lead">Four things, in this order. Most people stop after the second one, and that's fine. <a href="/how-we-work/">How it all fits together →</a></p>
+    <p class="lead">Four things, in this order. Most people stop after the second one, and that's fine. <a href="/how-we-work">How it all fits together →</a></p>
   </div>
   <div class="offer-grid" id="prices">
     <article class="offer">
       <div class="num">01</div>
-      <h3><a href="/look-round/" class="offer-link">The look-round</a></h3>
+      <h3><a href="/look-round" class="offer-link">The look-round</a></h3>
       <div class="price">Free</div>
       <p>An hour at your place. We watch how the work actually flows, ask daft questions, and say where AI would save real time and where it would just be a toy. You get a one-page aye/nay list. No pitch.</p>
-      <a href="/look-round/" class="more">About the look-round →</a>
+      <a href="/look-round" class="more">About the look-round →</a>
     </article>
     <article class="offer featured">
       <div class="num">02 · Most people start here</div>
-      <h3><a href="/half-day/" class="offer-link">The half-day</a></h3>
+      <h3><a href="/half-day" class="offer-link">The half-day</a></h3>
       <div class="price">£350</div>
       <p>Four hours at your place with Claude or ChatGPT and your own data: last month's bookings, the quotes you sent, the spreadsheet you dread. By the end you've built a dashboard or a report yourself, you know what to ask for, and you know what must never go into a public AI: where your data lives, what gets trained on, how to keep customer lists and your own IP out of it. No new subscription, no jargon, and you keep every prompt we write together.</p>
-      <a href="/half-day/" class="more">About the half-day →</a>
+      <a href="/half-day" class="more">About the half-day →</a>
     </article>
     <article class="offer">
       <div class="num">03</div>
-      <h3><a href="/build/" class="offer-link">The build</a></h3>
+      <h3><a href="/build" class="offer-link">The build</a></h3>
       <div class="price">From £2,500</div>
       <p>One job, fixed price, four weeks. We take the biggest aye from the look-round and build it into the tools you already use: Wix, Shopify, Xero, QuickBooks, your booking system. You see it working every week, not at the end. You own it.</p>
       <p class="small">Already know what you need? For larger businesses opening their own software and systems to AI, we build bespoke MCP servers and the governance around them. <a href="#book">Get in touch</a>.</p>
-      <a href="/build/" class="more">About the build →</a>
+      <a href="/build" class="more">About the build →</a>
     </article>
     <article class="offer">
       <div class="num">04</div>
-      <h3><a href="/fed-and-watered/" class="offer-link">Fed and watered</a></h3>
+      <h3><a href="/fed-and-watered" class="offer-link">Fed and watered</a></h3>
       <div class="price">From £150 a month</div>
       <p>Keeping what we built running. Updates when your software changes, a check-in each month, and a real person on the end of the phone when something looks odd. Cancel whenever. Nothing breaks if you do.</p>
-      <a href="/fed-and-watered/" class="more">About fed and watered →</a>
+      <a href="/fed-and-watered" class="more">About fed and watered →</a>
     </article>
   </div>
 </section>
@@ -129,7 +129,7 @@ try {
         <span class="chip dark">The morning brief</span><span class="chip dark">The quote that writes itself</span><span class="chip dark">The Friday chase</span>
       </div>
     </div>
-    <p class="small">Nothing leaves your systems to be trained on. The AI reads what it's allowed to and no more, and every answer shows where it got it from. That's one of nine things on the <a href="/capabilities/">full list of what we can build</a>.</p>
+    <p class="small">Nothing leaves your systems to be trained on. The AI reads what it's allowed to and no more, and every answer shows where it got it from. That's one of nine things on the <a href="/capabilities">full list of what we can build</a>.</p>
   </div>
 </section>
 
@@ -139,7 +139,7 @@ try {
       <div class="kicker">Bodyworks by Corey, Harrogate · Corey's clinic, our back end · the first build</div>
       <h2>Every morning, a one-page brief on who's walking in today.</h2>
       <p>New or returning, last seen, what they booked, what they said on the intake form, where their package is up to. Read over the first brew. No typing, no digging through Wix. We launched the brand and built the booking system, so this was the obvious first job.</p>
-      <a href="/work/#bodyworks">Read how it was built →</a>
+      <a href="/work#bodyworks">Read how it was built →</a>
     </div>
     <div class="photo case-photo"><img src="/assets/work/bodyworks-brief.jpg" width="1600" height="1200" alt="The Bodyworks morning brief on a phone: the 12:30 appointment, paid on package, waiver signed, two treatment flags and visit history, with the client's name and notes blurred" loading="lazy"></div>
   </div>
@@ -166,7 +166,7 @@ try {
 <section class="wrap blog" id="blog">
   <div class="blog-head">
     <h2>Straight answers</h2>
-    <a href="/blog/">All posts →</a>
+    <a href="/blog">All posts →</a>
   </div>
   <div class="post-grid">
     {latest.map((post) => <PostCard post={post} summary={false} />)}
