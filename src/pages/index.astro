@@ -179,10 +179,13 @@ try {
   <div class="wrap">
     <div class="book-copy">
       <h2>Book a look-round</h2>
-      <p>Pick an hour and we'll come to you. If you'd rather talk first, the form reaches a person, not a bot.</p>
+      <p>Pick an hour and we'll come to you. It's free.</p>
       <LookRoundBooking />
     </div>
-    <form class="form" action="/api/enquiry" method="POST" aria-label="Contact form">
+    <div class="talk-first">
+      <h3 id="talk-first">Just a natter?</h3>
+      <p>Got a question, or not ready to book yet? Drop us a line. It reaches a person, not a bot.</p>
+    <form class="form" action="/api/enquiry" method="POST" aria-labelledby="talk-first">
       <input type="hidden" name="landing" value="/">
       <input type="checkbox" name="botcheck" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
       <label>Your name<input type="text" name="name" required></label>
@@ -202,7 +205,14 @@ try {
       </select></label>
       <button type="submit" class="btn btn-rapeseed">Send it</button>
     </form>
+    </div>
   </div>
 </section>
+
+<style>
+  .talk-first { flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .talk-first > p { color: var(--mist); }
+  .talk-first .form { flex: none; }
+</style>
 
 </Base>
