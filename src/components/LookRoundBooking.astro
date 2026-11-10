@@ -1,0 +1,247 @@
+---
+// The look-round booking calendar on the home page: the "Free look-round" service in Wix Bookings,
+// read here on the server, then the day strip, times, form and booking run in the browser on the
+// shipped booking store (src/wix/bookings/booking-flow-store.ts), which owns all booking logic.
+// Change the service (length, hours, wording) in the Wix dashboard, not here.
+import { fetchServiceBySlug } from '../wix/bookings/services';
+import type { ServiceDetail } from '../wix/bookings/types';
+
+interface Props { slug?: string }
+const { slug = 'free-look-round' } = Astro.props;
+
+let service: ServiceDetail | null = null;
+try {
+  service = await fetchServiceBySlug(slug);
+} catch (e) {
+  console.error('Look-round service read failed', e);
+}
+---
+{service ? (
+  <div class="booker" data-service={JSON.stringify(service)}>
+    <div class="booker-head">
+      <span class="booker-name">{service.name}</span>
+      <span class="booker-meta">{[service.durationLabel, 'at your place', service.free ? 'free' : service.price].filter(Boolean).join(' · ')}</span>
+    </div>
+    <div class="booker-week">
+      <button type="button" class="booker-nav" data-act="prev" aria-label="Earlier week">&#8249;</button>
+      <div class="booker-days" role="group" aria-label="Choose a day"></div>
+      <button type="button" class="booker-nav" data-act="next" aria-label="Later week">&#8250;</button>
+    </div>
+    <div class="booker-times" aria-live="polite"><p class="booker-note">Finding free times…</p></div>
+    <p class="booker-tz"></p>
+    <form class="booker-form" hidden novalidate>
+      <p class="booker-chosen"></p>
+      <div class="booker-fields"></div>
+      <button type="submit" class="btn btn-rapeseed booker-cta" disabled>Book it, it's free</button>
+      <p class="booker-error" role="alert" hidden></p>
+    </form>
+    <div class="booker-done" hidden role="status"></div>
+    <noscript><p class="booker-note">The calendar needs JavaScript. Use the form and we'll sort a time.</p></noscript>
+  </div>
+) : (
+  <div class="booker booker-off">
+    <p class="booker-note">Online booking is having a brew. Use the form and we'll sort a time with you.</p>
+  </div>
+)}
+
+<script>
+  import { createBookingFlowStore, type BookingFlowState } from '../wix/bookings/booking-flow-store';
+  import type { ServiceDetail, Slot } from '../wix/bookings/types';
+
+  const root = document.querySelector<HTMLElement>('.booker[data-service]');
+  if (root) {
+    const service = JSON.parse(root.dataset.service ?? 'null') as ServiceDetail;
+    const store = createBookingFlowStore(service);
+    const $ = <T extends Element>(sel: string) => root.querySelector<T>(sel)!;
+    const daysEl = $<HTMLElement>('.booker-days');
+    const timesEl = $<HTMLElement>('.booker-times');
+    const tzEl = $<HTMLElement>('.booker-tz');
+    const formEl = $<HTMLFormElement>('.booker-form');
+    const chosenEl = $<HTMLElement>('.booker-chosen');
+    const fieldsEl = $<HTMLElement>('.booker-fields');
+    const ctaEl = $<HTMLButtonElement>('.booker-cta');
+    const errorEl = $<HTMLElement>('.booker-error');
+    const doneEl = $<HTMLElement>('.booker-done');
+    const prevEl = $<HTMLButtonElement>('[data-act="prev"]');
+
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    const keyOf = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const noon = (dayKey: string) => new Date(`${dayKey}T12:00:00`);
+    const fmt = (dayKey: string, opts: Intl.DateTimeFormatOptions) => noon(dayKey).toLocaleDateString('en-GB', opts);
+    const hourOf = (s: Slot) => Number(s.startLocal.slice(11, 13));
+    const todayKey = keyOf(new Date());
+
+    let activeDay: string | null = null;
+    let lastDays: BookingFlowState['days'] | undefined;
+    let lastSlot: Slot | null | undefined;
+    let lastActive: string | null | undefined;
+    let builtFields: BookingFlowState['formFields'] | null = null;
+
+    function renderWeek(s: BookingFlowState) {
+      const start = new Date(s.windowStart);
+      const withTimes = new Map((s.days ?? []).map((d) => [d.dayKey, d.slots.filter((x) => x.bookable).length]));
+      if (s.days && (!activeDay || !withTimes.get(activeDay))) activeDay = [...withTimes.entries()].find(([, n]) => n > 0)?.[0] ?? null;
+      let html = '';
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(start); d.setDate(start.getDate() + i);
+        const k = keyOf(d);
+        const n = withTimes.get(k) ?? 0;
+        const on = k === activeDay;
+        html += `<button type="button" class="booker-day${on ? ' is-on' : ''}" data-day="${k}" ${n ? '' : 'disabled'} aria-pressed="${on}">
+          <span>${fmt(k, { weekday: 'short' })}</span><b>${fmt(k, { day: 'numeric' })}</b></button>`;
+      }
+      daysEl.innerHTML = html;
+      prevEl.disabled = keyOf(start) <= todayKey;
+    }
+
+    function renderTimes(s: BookingFlowState) {
+      if (s.days === null) { timesEl.innerHTML = '<p class="booker-note">Finding free times…</p>'; return; }
+      const day = s.days.find((d) => d.dayKey === activeDay);
+      if (!day) {
+        const next = s.nextAvailable?.[0];
+        timesEl.innerHTML = next
+          ? `<p class="booker-note">Nothing free this week. The next time is ${esc(fmt(next.dayKey, { weekday: 'long', day: 'numeric', month: 'long' }))} at ${esc(next.label)}.</p>
+             <button type="button" class="booker-link" data-jump="${next.dayKey}">Show that week</button>`
+          : s.nextAvailable === null
+            ? '<p class="booker-note">Nothing free this week. Looking further ahead…</p>'
+            : '<p class="booker-note">No free times coming up. Use the form and we\'ll sort one.</p>';
+        return;
+      }
+      const buckets: [string, Slot[]][] = [
+        ['Morning', day.slots.filter((x) => hourOf(x) < 12)],
+        ['Afternoon', day.slots.filter((x) => hourOf(x) >= 12 && hourOf(x) < 17)],
+        ['Evening', day.slots.filter((x) => hourOf(x) >= 17)],
+      ];
+      timesEl.innerHTML = `<p class="booker-dayname">${esc(fmt(day.dayKey, { weekday: 'long', day: 'numeric', month: 'long' }))}</p>` +
+        buckets.filter(([, list]) => list.length).map(([name, list]) => `<div class="booker-bucket"><span>${name}</span><div>${
+          list.map((x) => `<button type="button" class="booker-time${s.selectedSlot?.key === x.key ? ' is-on' : ''}" data-slot="${esc(x.key)}" ${x.bookable ? '' : 'disabled'} aria-pressed="${s.selectedSlot?.key === x.key}">${esc(x.label)}${x.bookable ? '' : ' · gone'}</button>`).join('')
+        }</div></div>`).join('');
+    }
+
+    const inputType = (t: string) => ({ EMAIL: 'email', PHONE: 'tel', NUMBER: 'number', URL: 'url' } as Record<string, string>)[t] ?? 'text';
+    const autocomplete = (target: string) => ({ first_name: 'given-name', last_name: 'family-name', email: 'email', phone: 'tel' } as Record<string, string>)[target] ?? 'off';
+
+    function buildFields(s: BookingFlowState) {
+      builtFields = s.formFields;
+      fieldsEl.innerHTML = s.formFields.map((f) => {
+        const id = `bk-${f.target}`;
+        const label = `${esc(f.label)}${f.required ? '' : ' <i>(optional)</i>'}`;
+        const control = f.options?.length
+          ? `<select id="${id}" name="${esc(f.target)}" ${f.required ? 'required' : ''}><option value="">Choose one</option>${f.options.map((o) => `<option>${esc(o)}</option>`).join('')}</select>`
+          : `<input id="${id}" name="${esc(f.target)}" type="${inputType(f.type)}" autocomplete="${autocomplete(f.target)}" ${f.required ? 'required' : ''} value="${esc(s.values[f.target] ?? '')}">`;
+        return `<label for="${id}"><span>${label}</span>${control}</label>`;
+      }).join('');
+    }
+
+    function render(s: BookingFlowState) {
+      if (s.confirmed) {
+        formEl.hidden = true;
+        root!.querySelector('.booker-week')!.setAttribute('hidden', '');
+        timesEl.hidden = true; tzEl.hidden = true;
+        const when = lastSlot ? `${fmt(lastSlot.dayKey, { weekday: 'long', day: 'numeric', month: 'long' })} at ${lastSlot.label}` : '';
+        doneEl.innerHTML = s.ctaState === 'requestToBook'
+          ? `<h3>Request sent<span class="stop">.</span></h3><p>${esc(when)}. You'll hear back once it's confirmed.</p>`
+          : `<h3>You're booked<span class="stop">.</span></h3><p>${esc(when)}. A confirmation email is on its way. Put the kettle on.</p>`;
+        doneEl.hidden = false;
+        return;
+      }
+      if (s.selectedSlot && s.selectedSlot.dayKey !== activeDay) activeDay = s.selectedSlot.dayKey;
+      if (s.days !== lastDays || s.selectedSlot !== lastSlot || activeDay !== lastActive) {
+        renderWeek(s);
+        renderTimes(s);
+        lastDays = s.days; lastSlot = s.selectedSlot; lastActive = activeDay;
+      }
+      tzEl.textContent = s.timeZoneLabel ? `Times are ${s.timeZoneLabel}.` : '';
+      if (s.formFields !== builtFields) buildFields(s);
+      formEl.hidden = !s.selectedSlot;
+      if (s.selectedSlot) chosenEl.textContent = `${fmt(s.selectedSlot.dayKey, { weekday: 'long', day: 'numeric', month: 'long' })} at ${s.selectedSlot.label}. Who are we coming to see?`;
+      ctaEl.disabled = !s.canBook || s.booking;
+      ctaEl.textContent = s.booking ? 'Booking…' : s.ctaState === 'requestToBook' ? 'Request this time' : service.free ? "Book it, it's free" : 'Book it';
+      errorEl.hidden = !s.error;
+      errorEl.textContent = s.error ?? '';
+    }
+
+    root.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('button');
+      if (!t || t.disabled) return;
+      const s = store.getState();
+      if (t.dataset.act === 'prev') store.prevWeek();
+      else if (t.dataset.act === 'next') store.nextWeek();
+      else if (t.dataset.day) { activeDay = t.dataset.day; if (s.selectedSlot?.dayKey !== activeDay) store.setSelectedSlot(null); render(store.getState()); }
+      else if (t.dataset.jump) { activeDay = t.dataset.jump; store.jumpTo(t.dataset.jump); }
+      else if (t.dataset.slot) {
+        const slot = s.days?.flatMap((d) => d.slots).find((x) => x.key === t.dataset.slot) ?? null;
+        store.setSelectedSlot(s.selectedSlot?.key === slot?.key ? null : slot);
+        if (store.getState().selectedSlot) requestAnimationFrame(() => formEl.querySelector<HTMLInputElement>('input, select')?.focus({ preventScroll: true }));
+      }
+    });
+    fieldsEl.addEventListener('input', (e) => {
+      const el = e.target as HTMLInputElement | HTMLSelectElement;
+      if (el.name) store.setValue(el.name, el.value);
+    });
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      store.book().catch(() => { /* the store keeps the message in .error, rendered beside the button */ });
+    });
+
+    store.subscribe(render);
+    render(store.getState());
+    store.start();
+  }
+</script>
+
+<style is:global>
+  .booker { background: #22262C; border: 1px solid rgba(243,240,234,0.12); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; color: var(--stone); font-size: 16px; }
+  .booker-off, .booker-note { color: var(--mist); }
+  .booker-note { margin: 0; font-size: 15px; }
+  .booker-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(243,240,234,0.12); }
+  .booker-name { font-family: var(--font-display); font-size: 22px; letter-spacing: -0.02em; }
+  .booker-meta { color: var(--mist); font-size: 15px; }
+  .booker-week { display: flex; align-items: stretch; gap: 6px; }
+  .booker-week[hidden] { display: none; }
+  .booker-days { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  .booker button { font: inherit; cursor: pointer; }
+  .booker-nav { width: 32px; border-radius: 8px; border: 1px solid rgba(243,240,234,0.18); background: transparent; color: var(--stone); font-size: 22px; line-height: 1; }
+  .booker-nav:hover:not(:disabled) { border-color: var(--rapeseed); color: var(--rapeseed); }
+  .booker-nav:disabled { opacity: 0.25; cursor: default; }
+  .booker-day { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; border-radius: 8px; border: 1px solid rgba(243,240,234,0.18); background: transparent; color: var(--stone); min-height: 56px; }
+  .booker-day span { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mist); }
+  .booker-day b { font-family: var(--font-display); font-weight: 400; font-size: 20px; line-height: 1; }
+  .booker-day:hover:not(:disabled) { border-color: var(--teal); background: rgba(15,110,106,0.25); }
+  .booker-day.is-on { background: var(--teal); border-color: var(--teal); }
+  .booker-day.is-on span { color: var(--stone); }
+  .booker-day:disabled { opacity: 0.3; cursor: default; }
+  .booker-times { display: flex; flex-direction: column; gap: 12px; min-height: 96px; }
+  .booker-times[hidden] { display: none; }
+  .booker-dayname { margin: 0; font-weight: 600; }
+  .booker-bucket { display: flex; flex-direction: column; gap: 6px; }
+  .booker-bucket > span { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--mist); }
+  .booker-bucket > div { display: flex; flex-wrap: wrap; gap: 6px; }
+  .booker-time { min-height: 40px; padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(243,240,234,0.25); background: transparent; color: var(--stone); font-variant-numeric: tabular-nums; }
+  .booker-time:hover:not(:disabled) { border-color: var(--rapeseed); }
+  .booker-time.is-on { background: var(--rapeseed); border-color: var(--rapeseed); color: var(--coal); font-weight: 600; }
+  .booker-time:disabled { opacity: 0.35; text-decoration: line-through; cursor: default; }
+  .booker-link { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--rapeseed); text-decoration: underline; font-weight: 600; }
+  .booker-tz { margin: 0; font-size: 13px; color: var(--mist); }
+  .booker-tz[hidden], .booker-tz:empty { display: none; }
+  .booker-form { display: flex; flex-direction: column; gap: 14px; padding-top: 16px; border-top: 1px solid rgba(243,240,234,0.12); }
+  .booker-form[hidden] { display: none; }
+  .booker-chosen { margin: 0; font-weight: 600; }
+  .booker-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .booker-fields label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; }
+  .booker-fields label i { font-style: normal; font-weight: 400; color: var(--mist); }
+  .booker-fields input, .booker-fields select { font: inherit; font-weight: 400; font-size: 16px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--flag); background: var(--stone); color: var(--coal); min-height: 44px; width: 100%; }
+  .booker-cta { align-self: flex-start; }
+  .booker-cta:disabled { opacity: 0.45; cursor: default; }
+  .booker-error { margin: 0; color: #FFB4A8; font-size: 15px; }
+  .booker-error[hidden] { display: none; }
+  .booker-done[hidden] { display: none; }
+  .booker-done h3 { font-size: 28px; margin-bottom: 8px; }
+  .booker-done p { margin: 0; }
+  @media (max-width: 480px) {
+    .booker { padding: 16px; }
+    .booker-days { gap: 4px; }
+    .booker-day b { font-size: 17px; }
+    .booker-nav { width: 26px; }
+  }
+</style>
