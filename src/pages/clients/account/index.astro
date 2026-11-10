@@ -1,0 +1,40 @@
+---
+// /clients/account/: the client's own details (their Wix contact) and a password reset email.
+import ClientArea from '../../../layouts/ClientArea.astro';
+import { currentClient } from '../../../lib/clients';
+
+const viewer = await currentClient();
+if (!viewer) return Astro.redirect('/api/auth/login?returnToUrl=/clients/account/');
+if (viewer.isAdmin) return Astro.redirect('/clients/admin/');
+
+const done = Astro.url.searchParams.get('done');
+const notes: Record<string, string> = {
+  saved: 'Saved.',
+  password: `We've emailed a link to ${viewer.email} to set a new password. It lasts three hours.`,
+  error: 'That didn’t work. Please try again.',
+};
+const note = done && notes[done];
+---
+<ClientArea title="Your account" heading="Your account" viewer={viewer} current="account">
+  {note && <p class="client-msg" role="status">{note}</p>}
+
+  <form method="post" action="/api/clients/account" class="account-form ov-card">
+    <input type="hidden" name="action" value="save">
+    <h2>Your details</h2>
+    <div class="account-grid">
+      <label>First name<input name="firstName" value={viewer.firstName} maxlength="60" autocomplete="given-name"></label>
+      <label>Last name<input name="lastName" value={viewer.lastName} maxlength="60" autocomplete="family-name"></label>
+      <label>Business<input name="company" value={viewer.company} maxlength="100" autocomplete="organization"></label>
+      <label>Phone<input name="phone" value={viewer.phone} maxlength="30" autocomplete="tel" inputmode="tel"></label>
+    </div>
+    <p class="ov-muted">You sign in as <strong>{viewer.email}</strong>. To change that, send us a message.</p>
+    <button class="btn btn-teal btn-sm" type="submit">Save</button>
+  </form>
+
+  <form method="post" action="/api/clients/account" class="account-form ov-card">
+    <input type="hidden" name="action" value="password">
+    <h2>Password</h2>
+    <p class="ov-muted">We'll email you a link to set a new one.</p>
+    <button class="btn btn-outline btn-sm" type="submit">Email me a link</button>
+  </form>
+</ClientArea>

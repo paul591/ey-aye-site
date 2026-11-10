@@ -1,48 +1,106 @@
 ---
-// /clients/: a signed-in client's own file space. Anyone not signed in goes to Wix's login page and
-// comes back here; an admin goes to /clients/admin/ to pick a client.
-import Base from '../../layouts/Base.astro';
-import ClientSpace from '../../components/ClientSpace.astro';
-import { currentClient, filesFor, foldersFor, isId, LOGIN_URL, LOGOUT_URL, type ClientFile, type Folder } from '../../lib/clients';
-
-Astro.response.headers.set('Cache-Control', 'private, no-store');
+// /clients/: the client's overview. Their project (from Wix Pipelines), what's new since their
+// last visit, the latest message, and anything to pay. Admins go to /clients/admin/.
+import ClientArea from '../../layouts/ClientArea.astro';
+import { currentClient, filesFor, LOGIN_URL, type ClientFile } from '../../lib/clients';
+import { chatFor, invoicesFor, projectsFor, shortDate, timeAgo, type ChatMessage, type Invoice, type Project } from '../../lib/portal';
 
 const viewer = await currentClient();
 if (!viewer) return Astro.redirect(LOGIN_URL);
 if (viewer.isAdmin) return Astro.redirect('/clients/admin/');
 
-let folders: Folder[] = [];
-let files: ClientFile[] = [];
-let failed = false;
-try {
-  [folders, files] = await Promise.all([foldersFor(viewer), filesFor(viewer)]);
-} catch (err) {
-  console.error('client space failed', err);
-  failed = true;
-}
-const folderParam = Astro.url.searchParams.get('folder');
-const folder = isId(folderParam) ? folders.find((f) => f.id === folderParam) : undefined;
-const rawMsg = Astro.url.searchParams.get('msg') ?? '';
-const msg = /^[A-Za-z’'., -]{1,120}$/.test(rawMsg) ? rawMsg : undefined;
-const firstName = viewer.name.split(' ')[0];
+const settle = async <T,>(p: Promise<T>, fallback: T): Promise<[T, boolean]> => {
+  try {
+    return [await p, true];
+  } catch (err) {
+    console.error('client overview part failed', err);
+    return [fallback, false];
+  }
+};
+const [[projects, projectsOk], [files, filesOk], [chat, chatOk], [bills, billsOk]] = await Promise.all([
+  settle<Project[]>(projectsFor(viewer), []),
+  settle<ClientFile[]>(filesFor(viewer), []),
+  settle<ChatMessage[]>(chatFor(viewer, 20), []),
+  settle<Invoice[]>(invoicesFor(viewer), []),
+]);
+
+const seenFiles = Astro.cookies.get('ca_seen_files')?.value ?? '';
+const seenMsgs = Astro.cookies.get('ca_seen_msgs')?.value ?? '';
+const newFiles = files.filter((f) => f.uploadedBy === 'ey-aye' && (!seenFiles || f.createdAt > seenFiles));
+const unread = chat.filter((m) => m.from === 'ey-aye' && (!seenMsgs || m.at > seenMsgs));
+const latest = chat[chat.length - 1];
+const toPay = bills.filter((b) => b.status !== 'paid');
+const firstName = viewer.firstName || viewer.name.split(' ')[0];
 ---
-<Base title="Your files — Ey-aye" noindex>
-<section class="wrap hero client-area">
-  <div class="hero-copy">
-    <p class="kicker teal">Client area</p>
-    <h1>{firstName ? `Ey up, ${firstName}` : 'Ey up'}<span class="stop">.</span></h1>
-    <p class="lead">Everything we share with you, and anything you want to send us. Download links last fifteen minutes, so use this page rather than bookmarking them.</p>
+<ClientArea
+  title="Your client area"
+  heading={firstName ? `Ey up, ${firstName}` : 'Ey up'}
+  lead="Your project, your files and everything between us, in one place."
+  viewer={viewer}
+  current="overview"
+  badges={{ files: newFiles.length, messages: unread.length, invoices: toPay.length }}
+>
+  <div class="overview">
+    {projects.length > 0 ? projects.map((p) => (
+      <article class="ov-card ov-project">
+        <div class="ov-head">
+          <h2>{p.name}</h2>
+          {p.finished ? <span class="pill pill-done">Complete</span> : p.due && <span class="pill">Due {shortDate(p.due)}</span>}
+        </div>
+        {p.stages.length > 0 && (
+          <ol class="proj-stages" aria-label="Project stages">
+            {p.stages.map((s) => (
+              <li class={`proj-stage ${s.state}`} aria-current={s.state === 'current' ? 'step' : undefined}>
+                <span class="dot" aria-hidden="true"></span>
+                <span class="stage-name">{s.name}</span>
+              </li>
+            ))}
+          </ol>
+        )}
+        {p.next && !p.finished && (
+          <div class="ov-next">
+            <span class="ov-label">What's next</span>
+            <p>{p.next}</p>
+          </div>
+        )}
+      </article>
+    )) : (
+      <article class="ov-card ov-project">
+        <h2>Your project</h2>
+        <p class="ov-muted">{projectsOk ? 'Once we get started, you’ll see where things are up to here.' : 'Your project status won’t load just now. Try again in a minute.'}</p>
+      </article>
+    )}
+
+    <div class="ov-grid">
+      <a class="ov-card ov-tile" href="/clients/messages/">
+        <span class="ov-label">Messages{unread.length > 0 && <span class="tab-badge">{unread.length} new</span>}</span>
+        {!chatOk ? <p class="ov-muted">Messages won’t load just now.</p>
+          : latest ? <>
+            <p class="ov-quote">“{latest.text.length > 140 ? latest.text.slice(0, 140) + '…' : latest.text || 'Sent a file'}”</p>
+            <span class="ov-meta">{latest.from === 'client' ? 'You' : 'Ey-aye'} · {timeAgo(latest.at)}</span>
+          </>
+          : <p class="ov-muted">Ask us anything. We’ll reply here.</p>}
+        <span class="ov-go">Open messages →</span>
+      </a>
+
+      <a class="ov-card ov-tile" href="/clients/files/">
+        <span class="ov-label">Files{newFiles.length > 0 && <span class="tab-badge">{newFiles.length} new</span>}</span>
+        {!filesOk ? <p class="ov-muted">Files won’t load just now.</p>
+          : newFiles.length > 0 ? <ul class="ov-list">{newFiles.slice(0, 3).map((f) => <li>{f.title}</li>)}</ul>
+          : <p class="ov-muted">{files.length ? `${files.length} ${files.length === 1 ? 'file' : 'files'}, nothing new since your last visit.` : 'Nothing shared yet. You can upload files for us too.'}</p>}
+        <span class="ov-go">Open files →</span>
+      </a>
+
+      <a class="ov-card ov-tile" href="/clients/invoices/">
+        <span class="ov-label">Invoices{toPay.length > 0 && <span class="tab-badge">{toPay.length} to pay</span>}</span>
+        {!billsOk ? <p class="ov-muted">Invoices won’t load just now.</p>
+          : toPay.length > 0 ? <>
+            <p class="ov-big">{toPay[0].balance}</p>
+            <span class={`ov-meta${toPay[0].overdue ? ' overdue' : ''}`}>{toPay[0].number && `${toPay[0].number} · `}{toPay[0].overdue ? 'Overdue since ' : 'Due '}{shortDate(toPay[0].due)}</span>
+          </>
+          : <p class="ov-muted">{bills.length ? 'All paid. Thank you.' : 'No invoices yet.'}</p>}
+        <span class="ov-go">Open invoices →</span>
+      </a>
+    </div>
   </div>
-
-  {failed ? (
-    <p class="client-empty">Your files won't load just now. Try again in a minute, or email <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a>.</p>
-  ) : (
-    <ClientSpace viewer={viewer} space={viewer} folders={folders} files={files} folder={folder} msg={msg} />
-  )}
-
-  <form method="post" action={LOGOUT_URL} class="client-signout">
-    <span>Signed in as {viewer.email || viewer.name}.</span>
-    <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
-  </form>
-</section>
-</Base>
+</ClientArea>

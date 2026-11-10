@@ -46,14 +46,17 @@ Code: `src/components/LookRoundBooking.astro` (the calendar's look) on Wix's shi
 
 ## Client area (`/clients/`)
 
-Each client gets a private file space shared with Ey-aye. They sign in with Wix's own login page (the **Client Login** link in the header and footer, which includes "forgotten password"). Member sign-up should be approval-only (**Dashboard → Settings → Member signup**) so only people you add get in.
+A private portal per client, built on Wix's own apps so you run it from the Wix dashboard. Clients sign in with Wix's login page (the **Client Login** link in the header and footer, which includes "forgotten password"). Member sign-up should be approval-only (**Dashboard → Settings → Member signup**) so only people you add get in. **Adding a client:** add them as a site member (Contacts or Site Members) and send their set-password email.
 
-- **Clients** (`/clients/`): see their files, download (15-minute links), upload (drag and drop; PDFs, Office files, text and images, up to 50 MB), add and rename folders, and move files between folders.
-- **You** (`/clients/admin/`, or **Client Area** in the header when signed in): pick a client and do all of the above in their space, plus delete files and folders (deleted files go to the Media Manager's trash). Admins are listed by member ID in `ADMIN_MEMBER_IDS` in `src/lib/clients.ts`.
+| Tab | What the client sees | Where you manage it |
+|---|---|---|
+| **Overview** | Their project's stage, "What's next" and due date; new files; the latest message; anything to pay | Their card in **CRM → Pipelines** (or the Pipelines tab on their contact): card name = project name, stage = where it's up to, description = "What's next", due date. Any pipeline works; a card shows when the client is its main or an additional contact |
+| **Files** | Folders and files; upload, download (15-minute links), add/rename folders, move files | `/clients/admin/` (pick the client): all of that plus delete. Admins are listed in `ADMIN_MEMBER_IDS` in `src/lib/clients.ts` |
+| **Messages** | Their conversation with you | **Wix Inbox** (dashboard, the Inbox tab on their contact, or the Wix app). Uploads post a note into the conversation, so Inbox tells you about them too |
+| **Invoices** | Sent invoices with status, due date, and a link to Wix's page to view and pay | **Wix Invoices** (or the Invoices tab on their contact). Drafts and voided invoices don't show |
+| **Account** | Edit name, business, phone; email themselves a set-password link | Their Wix contact |
 
-**Adding a client:** add them as a site member in the dashboard (Contacts or Site Members), then send their set-password email.
-
-Storage: files are private in the Media Manager under `client-documents/<memberId>/`; the CMS collections `ClientDocuments` (one row per file) and `ClientFolders` (one per folder) say whose they are and where they sit. Both collections are admin-only; the site reads them with elevated permissions and scopes everything to the signed-in member (or the client an admin picked). Uploads go from the browser straight to Wix and are only recorded if the file landed in that client's own Media folder. Code: `src/lib/clients.ts`, `src/components/ClientSpace.astro`, `src/pages/clients/`, `src/pages/api/clients/`. Tick **Hide from search engines** for the `/clients` pages in SEO Settings → Main Pages.
+Storage for files: private in the Media Manager under `client-documents/<memberId>/`; the CMS collections `ClientDocuments` (one row per file) and `ClientFolders` say whose they are and where they sit. Both are admin-only; the site reads them (and Inbox, Pipelines and Invoices) with elevated permissions and scopes everything to the signed-in member, or the client an admin picked. Uploads go from the browser straight to Wix and are only recorded if the file landed in that client's own Media folder. Code: `src/lib/clients.ts` (files, who's who), `src/lib/portal.ts` (Inbox, Pipelines, Invoices, account), `src/layouts/ClientArea.astro`, `src/components/ClientSpace.astro`, `src/pages/clients/`, `src/pages/api/clients/`. Tick **Hide from search engines** for the `/clients` pages in SEO Settings → Main Pages.
 
 ## Layout
 
