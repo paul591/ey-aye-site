@@ -82,24 +82,24 @@ const endsWithStop = post.title.endsWith('.');
 const headline = endsWithStop ? post.title.slice(0, -1) : post.title;
 const readTime = post.minutesToRead > 0 ? ` · ${post.minutesToRead} min read` : '';
 
-// Wix's headless SEO service leaves two gaps on posts, though the dashboard has both: no og:image
-// (so Facebook and LinkedIn previews have no picture) and an author with no name in the
+// Wix's headless SEO service leaves two gaps on posts, though the dashboard has both: the site's default
+// share image instead of the post's cover (or none at all) and an author with no name in the
 // BlogPosting structured data. Fill them from the post itself, without touching anything Wix sent.
 type SeoTag = { type?: string; props?: Record<string, string>; children?: string; disabled?: boolean };
 const seoConfig = (() => {
   if (!seoTagsServiceConfig || !post) return seoTagsServiceConfig;
   const tags = [...((seoTagsServiceConfig.tags ?? []) as SeoTag[])];
-  const hasProp = (p: string) => tags.some((t) => t.type === 'meta' && !t.disabled && t.props?.property === p);
-  const hasName = (n: string) => tags.some((t) => t.type === 'meta' && !t.disabled && t.props?.name === n);
   if (post.coverUrl) {
-    if (!hasProp('og:image')) {
-      tags.push(
-        { type: 'meta', props: { property: 'og:image', content: cardImage(post) } },
-        { type: 'meta', props: { property: 'og:image:width', content: '1200' } },
-        { type: 'meta', props: { property: 'og:image:height', content: '630' } },
-      );
-    }
-    if (!hasName('twitter:image')) tags.push({ type: 'meta', props: { name: 'twitter:image', content: cardImage(post) } });
+    // The post's own cover always wins over the site-wide default share image.
+    const isImageTag = (t: SeoTag) =>
+      t.type === 'meta' && (['og:image', 'og:image:width', 'og:image:height', 'og:image:secure_url'].includes(t.props?.property ?? '') || t.props?.name === 'twitter:image');
+    for (let i = tags.length - 1; i >= 0; i--) if (isImageTag(tags[i])) tags.splice(i, 1);
+    tags.push(
+      { type: 'meta', props: { property: 'og:image', content: cardImage(post) } },
+      { type: 'meta', props: { property: 'og:image:width', content: '1200' } },
+      { type: 'meta', props: { property: 'og:image:height', content: '630' } },
+      { type: 'meta', props: { name: 'twitter:image', content: cardImage(post) } },
+    );
   }
   for (const t of tags) {
     if (t.type !== 'script' || !t.children?.includes('BlogPosting')) continue;
