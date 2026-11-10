@@ -414,3 +414,25 @@ a.folder-card:hover { border-color: var(--teal); }
 .doc-move form { position: absolute; right: 0; top: calc(100% + 6px); z-index: 10; display: flex; gap: 8px; align-items: center; padding: 12px; background: var(--white); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 8px 24px rgba(21,24,28,.12); }
 .doc-move select { min-height: 40px; max-width: 220px; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 8px; font: inherit; font-size: 15px; background: var(--white); }
 @media (max-width: 640px) { .doc-move form { position: static; margin-top: 8px; box-shadow: none; flex-wrap: wrap; } .doc-actions { justify-content: flex-start; } }
+
+/* Work items with a full-width headline */
+.work-item.stacked, .work-item.flagship { flex-wrap: wrap; align-items: flex-start; }
+.work-head { flex: 1 1 100%; display: flex; flex-direction: column; gap: 14px; }
+.work-head h2 { font-size: clamp(28px, 3.5vw, 40px); max-width: 900px; }
+
+/* The NDA flagship */
+.work-item.dark { background: var(--coal); color: var(--stone); }
+.work-item.dark .tags span { border-color: #4A4F57; }
+.work-item.dark .note { font-size: 14px; color: var(--mist); }
+.flagship .work-head h2 { font-size: clamp(32px, 4.5vw, 52px); }
+.nda-side { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.nda-chat { background: #1E2228; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; font-size: 15px; line-height: 1.45; }
+.nda-chat .q { align-self: flex-end; max-width: 88%; background: var(--teal); color: var(--stone); border-radius: 12px 12px 2px 12px; padding: 10px 14px; }
+.nda-chat .steps { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--mist); }
+.nda-chat .steps span::before { content: "✓ "; color: var(--rapeseed); }
+.nda-chat .a { align-self: flex-start; max-width: 88%; background: #2A2E34; border-radius: 12px 12px 12px 2px; padding: 10px 14px; }
+.nda-chat .cap { font-size: 12px; color: var(--mist); margin-top: auto; }
+.nda-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.nda-facts div { display: flex; flex-direction: column; gap: 4px; border-top: 2px solid var(--rapeseed); padding-top: 10px; }
+.nda-facts b { font-family: "Archivo Black", "Archivo", sans-serif; font-size: 28px; line-height: 1; color: var(--stone); }
+.nda-facts span { font-size: 13px; color: var(--mist); line-height: 1.3; }
