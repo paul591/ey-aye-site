@@ -1,0 +1,50 @@
+---
+// Frame for every client-area page: heading, section tabs, sign-out. Pages are personal, so
+// nothing here is cached or indexed.
+import Base from './Base.astro';
+import { LOGOUT_URL, type Client } from '../lib/clients';
+
+interface Props {
+  title: string;
+  heading: string;
+  lead?: string;
+  viewer: Client;
+  current: 'overview' | 'files' | 'messages' | 'invoices' | 'account';
+  /** Small counts shown on the tabs (unread messages, new files, invoices due). */
+  badges?: Partial<Record<'files' | 'messages' | 'invoices', number>>;
+}
+const { title, heading, lead, viewer, current, badges = {} } = Astro.props;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+const tabs = [
+  ['overview', 'Overview', '/clients/'],
+  ['files', 'Files', '/clients/files/'],
+  ['messages', 'Messages', '/clients/messages/'],
+  ['invoices', 'Invoices', '/clients/invoices/'],
+  ['account', 'Account', '/clients/account/'],
+] as const;
+---
+<Base title={`${title} — Ey-aye`} noindex>
+<section class="wrap hero client-area">
+  <div class="hero-copy">
+    <p class="kicker teal">Client area{viewer.company ? ` · ${viewer.company}` : ''}</p>
+    <h1>{heading}<span class="stop">.</span></h1>
+    {lead && <p class="lead">{lead}</p>}
+  </div>
+
+  <nav class="client-tabs" aria-label="Client area">
+    {tabs.map(([key, label, href]) => (
+      <a href={href} aria-current={current === key ? 'page' : undefined}>
+        {label}
+        {key !== 'overview' && key !== 'account' && (badges as any)[key] > 0 && <span class="tab-badge">{(badges as any)[key]}</span>}
+      </a>
+    ))}
+  </nav>
+
+  <slot />
+
+  <form method="post" action={LOGOUT_URL} class="client-signout">
+    <span>Signed in as {viewer.email || viewer.name}.</span>
+    <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+  </form>
+</section>
+</Base>

@@ -17,6 +17,7 @@ import { auth } from '@wix/essentials';
 import { members } from '@wix/members';
 import { items } from '@wix/data';
 import { files, folders } from '@wix/media';
+import { notify, SITE_URL } from './portal';
 
 const DOCS = 'ClientDocuments';
 const FOLDERS = 'ClientFolders';
@@ -55,7 +56,13 @@ export const LOGOUT_URL = '/api/auth/logout?returnToUrl=/';
 
 export interface Client {
   id: string;
+  /** The member's Wix contact (CRM, Inbox, Invoices and Pipelines all key on this). */
+  contactId: string;
   name: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  phone: string;
   email: string;
   isAdmin: boolean;
 }
@@ -76,6 +83,8 @@ export interface ClientFile {
   note: string;
   /** YYYY-MM-DD */
   date: string;
+  /** When the row was added (ISO), for "new since your last visit". */
+  createdAt: string;
 }
 
 type Row = Record<string, any> & { _id: string };
@@ -90,7 +99,17 @@ function toClient(member: any): Client | null {
   if (!member?._id || member.status !== 'APPROVED') return null;
   const contact = member.contact ?? {};
   const name = [contact.firstName, contact.lastName].filter(Boolean).join(' ') || member.profile?.nickname || '';
-  return { id: member._id, name, email: member.loginEmail ?? '', isAdmin: ADMIN_MEMBER_IDS.has(member._id) };
+  return {
+    id: member._id,
+    contactId: member.contactId ?? '',
+    name,
+    firstName: contact.firstName ?? '',
+    lastName: contact.lastName ?? '',
+    company: contact.company ?? '',
+    phone: contact.phones?.[0] ?? '',
+    email: member.loginEmail ?? '',
+    isAdmin: ADMIN_MEMBER_IDS.has(member._id),
+  };
 }
 
 /** The signed-in, approved member, or null for anyone else (including anonymous visitors). */
@@ -134,7 +153,7 @@ export async function spaceFor(viewer: Client, requested: unknown): Promise<Clie
 
 /** The page that shows a space (and optionally one folder in it). */
 export function spaceUrl(viewer: Client, space: Client, folderId?: string): string {
-  const base = viewer.isAdmin ? `/clients/admin/?client=${encodeURIComponent(space.id)}` : '/clients/';
+  const base = viewer.isAdmin ? `/clients/admin/?client=${encodeURIComponent(space.id)}` : '/clients/files/';
   if (!folderId) return base;
   return `${base}${base.includes('?') ? '&' : '?'}folder=${encodeURIComponent(folderId)}`;
 }
@@ -167,6 +186,13 @@ function dateOnly(v: unknown): string {
   return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
 }
 
+function isoOf(v: unknown): string {
+  if (!v) return '';
+  const raw = typeof v === 'object' && v !== null && '$date' in v ? (v as any).$date : v;
+  const d = raw instanceof Date ? raw : new Date(raw as string);
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString();
+}
+
 function toFile(r: Row): ClientFile {
   return {
     id: r._id,
@@ -177,6 +203,7 @@ function toFile(r: Row): ClientFile {
     sizeInBytes: Number(r.sizeInBytes) || 0,
     note: r.note ?? '',
     date: dateOnly(r.documentDate) || dateOnly(r._createdDate),
+    createdAt: isoOf(r._createdDate),
   };
 }
 
@@ -394,6 +421,14 @@ export async function finishUpload(
     mimeType: ALLOWED_TYPES[extensionOf(fileName)] ?? '',
     documentDate: new Date().toISOString().slice(0, 10),
   });
+  const where = folderId ? (await folderRow(space, folderId))?.name : '';
+  await notify(
+    space,
+    viewer.isAdmin ? 'ey-aye' : 'client',
+    viewer.isAdmin
+      ? `We've shared “${fileName}” with you${where ? ` in ${where}` : ''}. It's in your files: ${SITE_URL}/clients/files/`
+      : `Uploaded “${fileName}”${where ? ` to ${where}` : ''}.`,
+  );
   return null;
 }
 

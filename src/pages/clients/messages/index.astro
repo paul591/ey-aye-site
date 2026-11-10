@@ -1,0 +1,77 @@
+---
+// /clients/messages/: the client's conversation with Ey-aye, kept in Wix Inbox. Paul reads and
+// replies from Inbox (dashboard, contact page, or the Wix app); new replies show up here.
+import ClientArea from '../../../layouts/ClientArea.astro';
+import { currentClient } from '../../../lib/clients';
+import { chatFor, shortDate, type ChatMessage } from '../../../lib/portal';
+
+const viewer = await currentClient();
+if (!viewer) return Astro.redirect('/api/auth/login?returnToUrl=/clients/messages/');
+if (viewer.isAdmin) return Astro.redirect('/clients/admin/');
+
+let chat: ChatMessage[] = [];
+let failed = false;
+try {
+  chat = await chatFor(viewer, 60);
+} catch (err) {
+  console.error('client messages failed', err);
+  failed = true;
+}
+if (!failed) Astro.cookies.set('ca_seen_msgs', new Date().toISOString(), { path: '/clients', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
+const sent = Astro.url.searchParams.get('sent') === '1';
+const error = Astro.url.searchParams.get('error') === '1';
+
+const time = (at: string) => (at ? new Date(at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' }) : '');
+const day = (at: string) => (at ? shortDate(at) : '');
+---
+<ClientArea title="Messages" heading="Messages" lead="Ask us anything about your project. We usually reply the same working day." viewer={viewer} current="messages">
+  <div class="chat">
+    {failed ? (
+      <p class="client-empty">Messages won't load just now. Try again in a minute, or email <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a>.</p>
+    ) : chat.length === 0 ? (
+      <p class="client-empty">No messages yet. Say hello below.</p>
+    ) : (
+      <ol class="chat-list">
+        {chat.map((m, i) => (
+          <>
+            {(i === 0 || day(m.at) !== day(chat[i - 1].at)) && <li class="chat-day" aria-hidden="true">{day(m.at)}</li>}
+            <li class={`chat-msg ${m.from === 'client' ? 'mine' : 'theirs'}`} id={i === chat.length - 1 ? 'latest' : undefined}>
+              <span class="sr-only">{m.from === 'client' ? 'You' : 'Ey-aye'} at {time(m.at)}:</span>
+              {m.text && <p>{m.text}</p>}
+              {m.files.map((f) => <a class="chat-file" href={f.url} target="_blank" rel="noopener">{f.name}</a>)}
+              <span class="chat-time" aria-hidden="true">{m.from === 'client' ? 'You' : 'Ey-aye'} · {time(m.at)}</span>
+            </li>
+          </>
+        ))}
+      </ol>
+    )}
+
+    {sent && <p class="client-msg" role="status">Sent. We’ll get back to you here.</p>}
+    {error && <p class="client-msg" role="alert">That didn’t send. Please try again, or email paul@ey-aye.co.uk.</p>}
+
+    <form method="post" action="/api/clients/messages" class="chat-form">
+      <label for="chat-text" class="sr-only">Your message</label>
+      <textarea id="chat-text" name="text" rows="3" maxlength="4000" required placeholder="Write a message…"></textarea>
+      <div class="chat-actions">
+        <span class="chat-hint">To send a file, add it on the <a href="/clients/files/">Files</a> page. We get told about uploads too.</span>
+        <button class="btn btn-teal" type="submit">Send</button>
+      </div>
+    </form>
+  </div>
+</ClientArea>
+
+<script>
+  // Keep the newest message in view, and quietly check for replies every 30 seconds while the
+  // page is open and nothing has been typed.
+  document.getElementById('latest')?.scrollIntoView({ block: 'nearest' });
+  const box = document.getElementById('chat-text') as HTMLTextAreaElement | null;
+  window.setInterval(() => {
+    if (document.visibilityState === 'visible' && box && !box.value.trim() && document.activeElement !== box) {
+      window.location.replace('/clients/messages/#latest');
+    }
+  }, 30000);
+  // Ctrl/Cmd+Enter sends.
+  box?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) box.form?.requestSubmit();
+  });
+</script>

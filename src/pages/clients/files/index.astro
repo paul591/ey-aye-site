@@ -1,0 +1,37 @@
+---
+// /clients/files/: the client's own file space (folders, uploads, downloads).
+import ClientArea from '../../../layouts/ClientArea.astro';
+import ClientSpace from '../../../components/ClientSpace.astro';
+import { currentClient, filesFor, foldersFor, isId, type ClientFile, type Folder } from '../../../lib/clients';
+
+const viewer = await currentClient();
+if (!viewer) return Astro.redirect('/api/auth/login?returnToUrl=/clients/files/');
+if (viewer.isAdmin) return Astro.redirect('/clients/admin/');
+
+
+let folders: Folder[] = [];
+let files: ClientFile[] = [];
+let failed = false;
+try {
+  [folders, files] = await Promise.all([foldersFor(viewer), filesFor(viewer)]);
+} catch (err) {
+  console.error('client space failed', err);
+  failed = true;
+}
+const folderParam = Astro.url.searchParams.get('folder');
+const folder = isId(folderParam) ? folders.find((f) => f.id === folderParam) : undefined;
+const rawMsg = Astro.url.searchParams.get('msg') ?? '';
+const msg = /^[A-Za-z’'., -]{1,120}$/.test(rawMsg) ? rawMsg : undefined;
+
+// "New" = shared by Ey-aye since this browser last opened the files page.
+const seen = Astro.cookies.get('ca_seen_files')?.value ?? '';
+const newIds = new Set(files.filter((f) => f.uploadedBy === 'ey-aye' && seen && f.createdAt > seen).map((f) => f.id));
+if (!failed) Astro.cookies.set('ca_seen_files', new Date().toISOString(), { path: '/clients', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 60 * 60 * 24 * 365 });
+---
+<ClientArea title="Your files" heading="Files" lead="Everything we share with you, and anything you want to send us. Download links last fifteen minutes, so use this page rather than bookmarking them." viewer={viewer} current="files">
+  {failed ? (
+    <p class="client-empty">Your files won't load just now. Try again in a minute, or email <a href="mailto:paul@ey-aye.co.uk">paul@ey-aye.co.uk</a>.</p>
+  ) : (
+    <ClientSpace viewer={viewer} space={viewer} folders={folders} files={files} folder={folder} msg={msg} newIds={newIds} />
+  )}
+</ClientArea>

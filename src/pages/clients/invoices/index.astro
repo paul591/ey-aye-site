@@ -1,0 +1,45 @@
+---
+// /clients/invoices/: the client's invoices from Wix Invoices, with Wix's own page to view and pay.
+import ClientArea from '../../../layouts/ClientArea.astro';
+import { currentClient } from '../../../lib/clients';
+import { invoicesFor, shortDate, type Invoice } from '../../../lib/portal';
+
+const viewer = await currentClient();
+if (!viewer) return Astro.redirect('/api/auth/login?returnToUrl=/clients/invoices/');
+if (viewer.isAdmin) return Astro.redirect('/clients/admin/');
+
+let bills: Invoice[] = [];
+let failed = false;
+try {
+  bills = await invoicesFor(viewer);
+} catch (err) {
+  console.error('client invoices failed', err);
+  failed = true;
+}
+const label = (b: Invoice) => (b.status === 'paid' ? 'Paid' : b.overdue ? 'Overdue' : b.status === 'part-paid' ? 'Part paid' : 'To pay');
+---
+<ClientArea title="Invoices" heading="Invoices" lead="Everything we've invoiced you for. Open one to see the details, download a PDF or pay online." viewer={viewer} current="invoices">
+  {failed ? (
+    <p class="client-empty">Invoices won't load just now. Try again in a minute.</p>
+  ) : bills.length === 0 ? (
+    <p class="client-empty">No invoices yet.</p>
+  ) : (
+    <ul class="doc-list">
+      {bills.map((b) => (
+        <li class="doc">
+          <div class="doc-text">
+            <span class="doc-title">{[b.number, b.title].filter(Boolean).join(' · ') || 'Invoice'}</span>
+            <span class="doc-meta">
+              {b.issued && `Issued ${shortDate(b.issued)}`}{b.due && b.status !== 'paid' && ` · Due ${shortDate(b.due)}`} · {b.total}
+              {b.status === 'part-paid' && ` · ${b.balance} left to pay`}
+            </span>
+          </div>
+          <div class="doc-actions">
+            <span class={`pill ${b.status === 'paid' ? 'pill-done' : b.overdue ? 'pill-alert' : ''}`}>{label(b)}</span>
+            {b.url && <a class={`btn btn-sm ${b.status === 'paid' ? 'btn-outline' : 'btn-teal'}`} href={b.url} target="_blank" rel="noopener">{b.status === 'paid' ? 'View' : 'View and pay'}</a>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</ClientArea>

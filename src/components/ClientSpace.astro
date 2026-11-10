@@ -20,8 +20,10 @@ interface Props {
   /** The open folder, or undefined for the top level. */
   folder?: Folder;
   msg?: string;
+  /** Files to mark "New". */
+  newIds?: Set<string>;
 }
-const { viewer, space, folders, files, folder, msg } = Astro.props;
+const { viewer, space, folders, files, folder, msg, newIds = new Set<string>() } = Astro.props;
 const admin = viewer.isAdmin;
 const folderIds = new Set(folders.map((f) => f.id));
 const shown = folder ? files.filter((f) => f.folderId === folder.id) : files.filter((f) => !folderIds.has(f.folderId));
@@ -101,7 +103,7 @@ const from = (f: ClientFile) => (f.uploadedBy === 'client' ? (admin ? 'From clie
       {shown.map((d) => (
         <li class="doc">
           <div class="doc-text">
-            <a class="doc-title" href={`/clients/doc/${d.id}`}>{d.title}</a>
+            <a class="doc-title" href={`/clients/doc/${d.id}`}>{d.title}{newIds.has(d.id) && <span class="tab-badge">New</span>}</a>
             <span class="doc-meta">{[longDate(d.date), fileSize(d.sizeInBytes), from(d)].filter(Boolean).join(' · ')}</span>
             {d.note && <p class="doc-note">{d.note}</p>}
           </div>
