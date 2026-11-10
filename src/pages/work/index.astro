@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 
 const page = {
   "title": "Projects — Ey-aye",
-  "description": "Things Ey-aye has built: Bodyworks by Corey, Loftsoft Racing's AI over race data, Purple Helmet, and an AI assistant inside an automotive calibration platform.",
+  "description": "Things Ey-aye has built: Bodyworks by Corey, Loftsoft Racing's AI over race data, ElectroStock, Purple Helmet, and an AI assistant inside an automotive calibration platform.",
   "path": "/work/",
   "og": [
     ["og:title", "Projects — Ey-aye"],
@@ -74,6 +74,22 @@ const page = {
       <a href="/blog/built-our-own/">Read how we built it →</a>
     </div>
     <div class="photo case-photo work-photo"><img src="/assets/work/relay.jpg" alt="The Relay dashboard showing a blog post with its separate Facebook and Instagram versions, each marked as published" style="object-position: top left"></div>
+  </article>
+
+  <article class="work-item plain" id="electrostock">
+    <div class="photo work-photo"><img src="/assets/work/electrostock-scan.jpg" alt="ElectroStock's scan screen on a phone: a photo of a relay board recognised as an ESP-01 WiFi Relay Module at 88 per cent, with two similar parts already in stock offered as possible matches" style="object-position: top center"></div>
+    <div class="work-copy">
+      <div class="kicker teal">ElectroStock · stock control for an electronics bench · working in a day</div>
+      <h2>Photograph a board, and it knows what it is, where it goes, and whether you've already got one.</h2>
+      <p>Drawers full of dev boards, breakouts and modules, and no idea what's in them, so the same £8 board gets bought three times. ElectroStock fixes that with a phone camera. Snap the part, front, back and a chip close-up, and Claude reads the silkscreen and chip markings, names it, files it under the right category and tags it. If it's already in stock, the app says so and offers to bump the count instead of adding a duplicate.</p>
+      <p>The clever bit isn't the AI, it's the rules around it. The model gets a fixed answer shape, the categories that already exist, and strict instructions to call the same part by the same name every time: a red LED and a green one are one part with a colour, not two categories. Every guess carries a confidence score, and a person confirms before anything is saved. Eighty-seven lines and 210 parts in, the stock list is still tidy.</p>
+      <p>Swap breakout boards for spare parts, stock lines or the tools in a van, and it's the same job: a photo in, a tidy record out.</p>
+      <div class="tags"><span>Claude vision</span><span>Phone + web app</span><span>Supabase</span><span>Duplicate checks</span><span>CSV export</span></div>
+    </div>
+    <figure class="work-wide">
+      <img src="/assets/work/electrostock-inventory.jpg" alt="The ElectroStock inventory on the web: parts grouped by category, each with a photo, quantity, location and tags, showing 87 items and 210 units in total">
+      <figcaption>The web view: every part photographed, categorised, tagged and counted, grouped the way the AI filed it.</figcaption>
+    </figure>
   </article>
 
   <div class="work-grid">
