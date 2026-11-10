@@ -36,6 +36,14 @@ Links to `https://ey-aye.co.uk/...` work on any address the site is served from.
 
 Everything else updates itself: the blog page, the newest three on the home page, Wix's sitemap, the RSS feeds at `/rss.xml` (ours) and `/blog-feed.xml` (Wix's), and each post's title, description and social tags (which you can edit per post in the dashboard).
 
+## Booking a look-round (home page, `#book`)
+
+The calendar in the Book section is the **Free look-round** service in Wix Bookings (slug `free-look-round`): one hour, at the client's place, free. Visitors pick a day and time, fill in the booking form and get Wix's confirmation email; the booking lands in **Dashboard → Bookings** (https://manage.wix.com/dashboard/e471bc0b-830d-4071-899b-2441d9760126/bookings/calendar).
+
+Change it in the dashboard, not the code: the service's wording and length under **Bookings → Services**, when you're free under **Bookings → Availability** (Mon–Fri 10:00–18:00 to start), the form's fields under **Bookings → Settings → Booking form** (the calendar shows whatever fields are there), notice and cancellation rules under **Policies**. A free booking still needs a payment method switched on ("manual payments" is enough): **Settings → Accept payments**.
+
+Code: `src/components/LookRoundBooking.astro` (the calendar's look) on Wix's shipped booking code in `src/wix/bookings/` (copy as-is; it owns the booking logic). If the service is renamed to a new slug, pass it: `<LookRoundBooking slug="…" />`.
+
 ## Client area (`/clients/`)
 
 Each client gets a private file space shared with Ey-aye. They sign in with Wix's own login page (the **Client Login** link in the header and footer, which includes "forgotten password"). Member sign-up should be approval-only (**Dashboard → Settings → Member signup**) so only people you add get in.
