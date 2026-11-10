@@ -336,8 +336,8 @@ section { padding-top: 80px; padding-bottom: 80px; }
   .nav-toggle:checked ~ .site-nav { display: flex; }
   .hero { padding-top: 32px; padding-bottom: 48px; gap: 24px; }
   .hero h1 { font-size: 38px; }
-  /* The photo sits below the buttons on phones, smaller, so the headline and button stay on the first screen. */
-  .hero-band .hero-photo { flex: 0 0 auto; width: min(280px, 100%); max-height: none; }
+  /* On phones the photo sits below the buttons, the full width of the text column. */
+  .hero-band .hero-photo { flex: 0 0 auto; width: 100%; max-height: none; }
   .hero-band::before { background-position: 35% 60%; }
   .hero-band::after { background: rgba(21,24,28,0.74); }
 }
